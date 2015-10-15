@@ -8,7 +8,7 @@ var phantom = require('phantom');
 var Promise = require('promise');
 var _ = require('lodash');
 
-var config = require('./config');
+var config = loadConfig();
 
 
 program
@@ -124,4 +124,20 @@ function finish() {
             resolve();
         });
     });
+}
+
+function loadConfig() {
+    var filepath = './config.json';
+
+    if (!fs.existsSync(filepath)) {
+        var data = {
+            email: '',
+            password: '',
+            username: '',
+        };
+
+        fs.writeFileSync(filepath, data);
+    }
+
+    return require(filepath);
 }
