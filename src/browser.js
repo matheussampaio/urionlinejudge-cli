@@ -6,12 +6,13 @@ export default class Browser {
         this.ph = undefined;
     }
 
-    _createPhantom() {
+    createPhantom() {
         return new Promise(resolve => {
             console.info('creating phantom');
 
             phantom.create(ph => {
                 this.ph = ph;
+                console.log('phantom created.');
                 resolve(this.ph);
             }, {
                 dnodeOpts: {
@@ -21,7 +22,7 @@ export default class Browser {
         });
     }
 
-    _createPage() {
+    createPage() {
         return new Promise(resolve => {
             console.info('creating page');
 
@@ -30,17 +31,6 @@ export default class Browser {
                 resolve(this.page);
             });
         });
-    }
-
-    create() {
-        return this._createPhantom()
-            .then(ph => {
-                return this._createPage();
-            });
-    }
-
-    config() {
-        return Promise.resolve(this.page);
     }
 
     open(url) {
@@ -66,11 +56,11 @@ export default class Browser {
     }
 
     exit() {
-        console.info('exiting');
-
-        this.ph.exit();
-
-        return Promise.resolve();
+        return new Promise(resolve => {
+            console.info('exiting');
+            this.ph.exit();
+            resolve();
+        });
     }
 
     evaluate(a, b, c) {

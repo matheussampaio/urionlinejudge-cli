@@ -2,7 +2,7 @@
 
 import fs from 'fs';
 import program from 'commander';
-import Browser from './browser';
+import BrowserWrapper from './browserWrapper';
 import config from '../../config.json';
 
 program
@@ -24,54 +24,54 @@ function main() {
     //     return console.error('Missing EMAIL and PASSWORD on config.json');
     // }
 
-    let browser = new Browser();
+    let browserWrapper = new BrowserWrapper();
 
-    browser
+    browserWrapper
         .create()
-        .then(() => {
-            return browser.open(URLS.base);
-        })
-        .then(() => {
-            return browser.screenshot('uri.png');
-        })
-        .then(() => {
-            return browser.evaluate((config) => {
-                document.getElementById('UserEmail').value = config.email;
-                document.getElementById('UserPassword').value = config.password;
-                document.forms[0].submit();
-            }, () => {
+        .open(URLS.base)
+        .screenshot('uri.png')
+        .open('http://www.google.com')
+        .screenshot('google.png')
+        .start();
 
-            },
-            config);
-        })
-        .then(() => {
-            return wait(2000);
-        })
-        .then(() => {
-            return browser.screenshot('logged.png');
-        })
-        .then(() => {
-            return browser.open(URLS.problemSubmit + program.problem);
-        })
-        .then(() => {
-            return browser.screenshot('problem.png');
-        })
-        .then(() => {
-            let file = fs.readFileSync(program.filepath, 'utf-8');
-
-            return browser.evaluate((file) => {
-                editor.getSession().setValue(file);
-                $('.send-submit').click();
-            }, () => {
-
-            }, file);
-        })
-        .then(() => {
-            return wait(2000);
-        })
-        .then(() => {
-            return browser.exit();
-        });
+        // .then(() => {
+        //     return browser.evaluate((config) => {
+        //         document.getElementById('UserEmail').value = config.email;
+        //         document.getElementById('UserPassword').value = config.password;
+        //         document.forms[0].submit();
+        //     }, () => {
+        //
+        //     },
+        //     config);
+        // })
+        // .then(() => {
+        //     return wait(2000);
+        // })
+        // .then(() => {
+        //     return browser.screenshot('logged.png');
+        // })
+        // .then(() => {
+        //     return browser.open(URLS.problemSubmit + program.problem);
+        // })
+        // .then(() => {
+        //     return browser.screenshot('problem.png');
+        // })
+        // .then(() => {
+        //     let file = fs.readFileSync(program.filepath, 'utf-8');
+        //
+        //     return browser.evaluate((file) => {
+        //         editor.getSession().setValue(file);
+        //         $('.send-submit').click();
+        //     }, () => {
+        //
+        //     }, file);
+        // })
+        // .then(() => {
+        //     return wait(2000);
+        // })
+        // .then(() => {
+        //     return browser.exit();
+        // });
 }
 
 function wait(time) {
