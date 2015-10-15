@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "CLI for iteract with URIOnlineJudge.",
   "main": "index.js",
+  "repository": "matheussampaio/urionlinejudge-cli",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,13 +11,25 @@
   "license": "MIT",
   "preferGlobal": true,
   "bin": {
-    "uoj": "index.js"
+    "uoj": "dist/src/index.js"
   },
   "dependencies": {
     "commander": "2.9.0",
     "lodash": "3.10.1",
     "phantom": "0.8.0",
-    "phantomjs": "1.9.18",
-    "promise": "7.0.4"
+    "phantomjs": "1.9.18"
+  },
+  "devDependencies": {
+    "del": "2.0.2",
+    "gulp": "3.9.0",
+    "gulp-babel": "5.2.1",
+    "gulp-changed": "1.3.0",
+    "gulp-jscs": "3.0.1",
+    "gulp-jscs-stylish": "1.2.1",
+    "gulp-jshint": "1.11.2",
+    "gulp-load-plugins": "0.10.0",
+    "gulp-plumber": "1.0.1",
+    "jshint-stylish": "2.0.1",
+    "run-sequence": "1.1.4"
   }
 }
