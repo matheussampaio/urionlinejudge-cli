@@ -1,0 +1,21 @@
+{
+  "name": "urionlinejudge-cli",
+  "version": "0.0.1",
+  "description": "CLI for iteract with URIOnlineJudge.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Matheus Sampaio",
+  "license": "MIT",
+  "preferGlobal": true,
+  "bin": {
+    "uoj": "index.js"
+  },
+  "dependencies": {
+    "commander": "2.9.0",
+    "phantom": "0.8.0",
+    "phantomjs": "1.9.18",
+    "promise": "7.0.4"
+  }
+}
