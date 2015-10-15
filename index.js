@@ -5,8 +5,11 @@
 var fs = require('fs');
 var program = require('commander');
 var phantom = require('phantom');
-var config = require('./config');
 var Promise = require('promise');
+var _ = require('lodash');
+
+var config = require('./config');
+
 
 program
     .version('0.0.1')
@@ -26,6 +29,10 @@ var _ph;
 main();
 
 function main() {
+    if (_.isEmpty(config.email) || _.isEmpty(config.password)) {
+        return console.error('Missing EMAIL and PASSWORD on config.json');
+    }
+
     phantom.create(function(ph) {
         _ph = ph;
 
