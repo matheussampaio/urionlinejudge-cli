@@ -41,7 +41,7 @@ export default class Browser {
         });
     }
 
-    open(url) {
+    open({url}) {
         return new Promise((resolve, reject) => {
             console.info('loading %s', url);
 
@@ -49,13 +49,13 @@ export default class Browser {
                 if (status === 'success') {
                     setTimeout(resolve, 2000);
                 } else {
-                    resolve(`open page failed (${status}): ${url}`);
+                    reject(`open page failed (${status}): ${url}`);
                 }
             });
         });
     }
 
-    screenshot(filename) {
+    screenshot({filename}) {
         return new Promise((resolve, reject) => {
             if (this.page) {
                 console.info('screenshot: %s', filename);
@@ -75,23 +75,36 @@ export default class Browser {
         });
     }
 
-    evaluate(a, b, c) {
+    submit({file}) {
         return new Promise(resolve => {
-            this.page.evaluate(a, function() {
-                b();
+            console.log('submiting file');
 
-                resolve();
-            }, c);
+            this.page.evaluate((file) => {
+                editor.getSession().setValue(file);
+                $('.send-submit').click();
+            }, () => {
+                setTimeout(resolve, 2000);
+            }, file);
         });
     }
 
-    submit(file) {
-        return this.page.evaluate((file) => {
-            editor.getSession().setValue(file);
-            $('.send-submit').click();
-        }, () => {
+    login({email, password}) {
+        return new Promise(resolve => {
+            console.log('submiting email and password');
 
-        }, file);
+            this.page.evaluate((config) => {
+                document.getElementById('UserEmail').value = config.email;
+                document.getElementById('UserPassword').value = config.password;
+                document.forms[0].submit();
+            },
+            () => {
+                setTimeout(resolve, 2000);
+            },
+            {
+                email,
+                password,
+            });
+        });
     }
 
 }

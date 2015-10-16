@@ -6,113 +6,61 @@ export default class BrowserWrapper {
         this.actions = [];
     }
 
-    create() {
-        this.actions.push({
-            id: 'createPhantom',
-        });
-
-        this.actions.push({
-            id: 'createPage',
-        });
+    add(action) {
+        this.actions.push(action);
 
         return this;
     }
 
-    open(url) {
-        this.actions.push({
-            url,
-
-            id: 'open',
-        });
-
-        return this;
+    createPhantom() {
+        return this.add({id: 'createPhantom'});
     }
 
-    screenshot(filename) {
-        this.actions.push({
-            filename,
+    createPage() {
+        return this.add({id: 'createPage'});
+    }
 
-            id: 'screenshot',
-        });
+    open({url}) {
+        return this.add({id: 'open', url});
+    }
 
-        return this;
+    screenshot({filename}) {
+        return this.add({id: 'screenshot', filename});
     }
 
     exit() {
-        this.actions.push({
-            id: 'exit',
-        });
+        return this.add({id: 'exit'});
+    }
 
-        return this;
+    submit({file}) {
+        return this.add({id: 'submit', file});
+    }
+
+    login({email, password}) {
+        return this.add({id: 'login', email, password});
+    }
+
+    wait({time}) {
+        return this.add({id: 'wait', time});
     }
 
     evaluate({before, after, params}) {
-        this.actions.push({
-            before,
-            after,
-            params,
-
-            id: 'evaluate',
-        });
-
-        return this;
-    }
-
-    wait(time) {
-        this.actions.push({
-            id: 'wait',
-            time: time,
-        });
-
-        return this;
+        return this.add({id: 'evaluate', before, after, params});
     }
 
     start() {
-        this.actions.reduce((prev, val) => {
+        let promise = this.actions.reduce((prev, action) => {
             return prev.then(() => {
-                return this.getPromise(val);
-            }); // successive execution of fn for all vals in array
-
-        }, Promise.resolve())
-            .catch(error => {
-                console.error('oops: %s', error);
-                return this.browser.exit();
+                return this.browser[action.id](action);
             });
-    }
+        }, Promise.resolve());
 
-    submit(file) {
-        this.actions.push({
-            id: 'submit',
+        this.actions = [];
 
-            file,
+        return promise.catch(error => {
+            console.error('promise failed: %s', error);
+            process.exit();
         });
-
-        return this;
     }
 
-    getPromise(action) {
-        if (action.id === 'createPhantom') {
-            return this.browser.createPhantom();
-        } else if (action.id === 'createPage') {
-            return this.browser.createPage();
-        } else if (action.id === 'open') {
-            return this.browser.open(action.url);
-        } else if (action.id === 'exit') {
-            return this.browser.exit();
-        } else if (action.id === 'screenshot') {
-            return this.browser.screenshot(action.filename);
-        } else if (action.id === 'evaluate') {
-            return this.browser.evaluate(action.before, action.after, action.params);
-        } else if (action.id === 'submit') {
-            return this.browser.submit(action.file);
-        } else if (action.id === 'wait') {
-            return new Promise(resolve => {
-                console.info('waiting %d seconds...', action.time / 1000);
-                setTimeout(resolve, action.time);
-            });
-        } else {
-            console.error('action unknown: %s. exiting.', action.id);
-            return this.browser.exit();
-        }
-    }
 }

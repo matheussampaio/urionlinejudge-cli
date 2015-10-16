@@ -1,10 +1,10 @@
 #! /usr/bin/env node
 
 import fs from 'fs';
+import _ from 'lodash';
 import program from 'commander';
 import BrowserWrapper from './browserWrapper';
 import config from '../../config.json';
-
 program
     .version('0.0.1')
     .option('-p, --problem <n>', 'Submit answer for problem <n>.')
@@ -20,80 +20,21 @@ var URLS = {
 main();
 
 function main() {
-    // if (_.isEmpty(config.email) || _.isEmpty(config.password)) {
-    //     return console.error('Missing EMAIL and PASSWORD on config.json');
-    // }
+    if (_.isEmpty(config.email) || _.isEmpty(config.password)) {
+        return console.error('Missing EMAIL and/or PASSWORD on config.json');
+    }
 
     let browserWrapper = new BrowserWrapper();
 
     const problemfile = fs.readFileSync(program.filepath, 'utf-8');
 
     browserWrapper
-        .create()
-        .open(URLS.base)
-        .screenshot('base.png')
-        .evaluate({
-            before: function(config) {
-                document.getElementById('UserEmail').value = config.email;
-                document.getElementById('UserPassword').value = config.password;
-                document.forms[0].submit();
-            },
-            after: function() {},
-            params: config,
-        })
-        .wait(2000)
-        .screenshot('logged.png')
-        .open(URLS.problemSubmit + program.problem)
-        .wait(2000)
-        .screenshot('problem.png')
-        .submit(problemfile)
-        .wait(2000)
-        .screenshot('submited.png')
+        .createPhantom()
+        .createPage()
+        .open({url: URLS.base})
+        .login({email: config.email, password: config.password})
+        .open({url: URLS.problemSubmit + program.problem})
+        .submit({file: problemfile})
         .exit()
         .start();
-
-        // .then(() => {
-        //     return browser.evaluate((config) => {
-        //         document.getElementById('UserEmail').value = config.email;
-        //         document.getElementById('UserPassword').value = config.password;
-        //         document.forms[0].submit();
-        //     }, () => {
-        //
-        //     },
-        //     config);
-        // })
-        // .then(() => {
-        //     return wait(2000);
-        // })
-        // .then(() => {
-        //     return browser.screenshot('logged.png');
-        // })
-        // .then(() => {
-        //     return browser.open(URLS.problemSubmit + program.problem);
-        // })
-        // .then(() => {
-        //     return browser.screenshot('problem.png');
-        // })
-        // .then(() => {
-        //     let file = fs.readFileSync(program.filepath, 'utf-8');
-        //
-        //     return browser.evaluate((file) => {
-        //         editor.getSession().setValue(file);
-        //         $('.send-submit').click();
-        //     }, () => {
-        //
-        //     }, file);
-        // })
-        // .then(() => {
-        //     return wait(2000);
-        // })
-        // .then(() => {
-        //     return browser.exit();
-        // });
-}
-
-function wait(time) {
-    return new Promise(resolve => {
-        setTimeout(resolve, time);
-    });
 }
