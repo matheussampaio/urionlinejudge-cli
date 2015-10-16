@@ -7,16 +7,14 @@
     // Define globals exposed by modern browsers.
     "browser": true,
 
-    // Define globals exposed by jQuery.
-    "jquery": true,
-
     // Define globals exposed by Node.js.
     "node": true,
 
     // Allow ES6.
     "esnext": true,
 
-    "jasmine": true,
+    // Mocha
+    "mocha": true,
 
     /*
      * ENFORCING OPTIONS
@@ -31,7 +29,7 @@
     "eqeqeq": true,
 
     // Enforce tab width of 2 spaces.
-    "indent": 2,
+    "indent": 4,
 
     // Allow use of a variable before it is defined.
     "latedef": false,
@@ -60,10 +58,5 @@
      */
 
     // Suppress warnings about == null comparisons.
-    "eqnull": true,
-
-    "globals": {
-        "angular": false,
-        "gui": false
-    }
+    "eqnull": true
 }

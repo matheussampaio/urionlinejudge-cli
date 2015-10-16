@@ -15,13 +15,24 @@ var config = {
     js: {
         src: [
             '**/*.js',
-            '!**/*.spec.js',
+            '!**/*.test.js',
+        ],
+        test: [
+            '**/*.test.js',
         ],
     },
 };
 
 gulp.task('build:clean', function() {
     return del([config.dist]);
+});
+
+gulp.task('test', function() {
+    return gulp.src(config.js.test, {cwd: config.src})
+        .pipe(plugins.mocha({
+            ui: 'bdd',
+            reporter: 'spec',
+        }));
 });
 
 gulp.task('build:js', function() {
@@ -48,7 +59,7 @@ gulp.task('lint:jshint', function() {
 });
 
 gulp.task('debug:watchers', function() {
-    gulp.watch(config.src + '**/*.js', ['build:js', 'lint:jshint', 'lint:jscs']);
+    gulp.watch(config.src + config.js.src, ['build:js', 'lint:jshint', 'lint:jscs']);
 });
 
 gulp.task('build', function(done) {
