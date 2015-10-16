@@ -26,12 +26,30 @@ function main() {
 
     let browserWrapper = new BrowserWrapper();
 
+    const problemfile = fs.readFileSync(program.filepath, 'utf-8');
+
     browserWrapper
         .create()
         .open(URLS.base)
-        .screenshot('uri.png')
-        .open('http://www.google.com')
-        .screenshot('google.png')
+        .screenshot('base.png')
+        .evaluate({
+            before: function(config) {
+                document.getElementById('UserEmail').value = config.email;
+                document.getElementById('UserPassword').value = config.password;
+                document.forms[0].submit();
+            },
+            after: function() {},
+            params: config,
+        })
+        .wait(2000)
+        .screenshot('logged.png')
+        .open(URLS.problemSubmit + program.problem)
+        .wait(2000)
+        .screenshot('problem.png')
+        .submit(problemfile)
+        .wait(2000)
+        .screenshot('submited.png')
+        .exit()
         .start();
 
         // .then(() => {

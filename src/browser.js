@@ -3,17 +3,21 @@ import phantom from 'phantom';
 export default class Browser {
     constructor() {
         this.page = undefined;
-        this.ph = undefined;
+        this.phantom = undefined;
     }
 
     createPhantom() {
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
             console.info('creating phantom');
 
-            phantom.create(ph => {
-                this.ph = ph;
-                console.log('phantom created.');
-                resolve(this.ph);
+            phantom.create(phantom => {
+                if (phantom) {
+                    this.phantom = phantom;
+                    console.log('phantom created.');
+                    resolve(this.phantom);
+                } else {
+                    reject('error creating phantom');
+                }
             }, {
                 dnodeOpts: {
                     weak: false,
@@ -23,12 +27,16 @@ export default class Browser {
     }
 
     createPage() {
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
             console.info('creating page');
 
-            this.ph.createPage(p => {
-                this.page = p;
-                resolve(this.page);
+            this.phantom.createPage(page => {
+                if (page) {
+                    this.page = page;
+                    resolve(this.page);
+                } else {
+                    reject('error creating page');
+                }
             });
         });
     }
@@ -41,36 +49,49 @@ export default class Browser {
                 if (status === 'success') {
                     setTimeout(resolve, 2000);
                 } else {
-                    reject();
+                    resolve(`open page failed (${status}): ${url}`);
                 }
             });
         });
     }
 
     screenshot(filename) {
-        return new Promise(resolve => {
-            console.info('screenshot: %s', filename);
+        return new Promise((resolve, reject) => {
+            if (this.page) {
+                console.info('screenshot: %s', filename);
 
-            this.page.render(filename, resolve);
+                this.page.render(filename, resolve);
+            } else {
+                reject('error when taking screenshot, page is null');
+            }
         });
     }
 
     exit() {
         return new Promise(resolve => {
             console.info('exiting');
-            this.ph.exit();
+            this.phantom.exit();
             resolve();
         });
     }
 
     evaluate(a, b, c) {
         return new Promise(resolve => {
-            this.page.evaluate(a, () => {
+            this.page.evaluate(a, function() {
                 b();
 
                 resolve();
             }, c);
         });
+    }
+
+    submit(file) {
+        return this.page.evaluate((file) => {
+            editor.getSession().setValue(file);
+            $('.send-submit').click();
+        }, () => {
+
+        }, file);
     }
 
 }
