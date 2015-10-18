@@ -14,7 +14,7 @@ export default class BrowserWrapper {
 
     createPhantom() {
         return this.add({id: 'createPhantom'});
-        
+
     }
 
     createPage() {

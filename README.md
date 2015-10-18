@@ -15,7 +15,7 @@ $ npm install -g phantomjs urionlinejudge-cli
 $ urionlinejudge --problem 1001 --filepath 1001.cpp
 ```
 
-or 
+or
 
 ```bash
 $ urionlinejudge -p 1001 -f 1001.cpp
