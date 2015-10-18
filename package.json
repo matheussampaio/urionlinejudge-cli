@@ -1,18 +1,29 @@
 {
   "name": "urionlinejudge-cli",
   "version": "0.0.1",
-  "description": "CLI for iteract with URIOnlineJudge.",
+  "description": "The URIOnlineJudge command line utility.",
   "main": "index.js",
-  "repository": "matheussampaio/urionlinejudge-cli",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matheussampaio/urionlinejudge-cli"
+  },
   "scripts": {
     "test": "mocha --compilers js:babel/register --watch src\\**\\*.test.js"
   },
-  "author": "Matheus Sampaio",
+  "author": "Matheus Sampaio <matheus@sampaio.us> (http://matheus.sampaio.us)",
+  "bugs": {
+    "url": "https://github.com/matheussampaio/urionlinejudge-cli/issues"
+  },
+  "homepage": "https://github.com/matheussampaio/urionlinejudge-cli",
   "license": "MIT",
   "preferGlobal": true,
   "bin": {
-    "uri": "dist/src/index.js"
+    "urionlinejudge": "dist/src/index.js"
   },
+  "keywords": [
+    "cli",
+    "urionlinejudge"
+  ],
   "dependencies": {
     "commander": "2.9.0",
     "lodash": "3.10.1",
