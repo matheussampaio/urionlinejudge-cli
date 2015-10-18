@@ -9,7 +9,8 @@
   },
   "scripts": {
     "commit": "git-cz",
-    "test": "mocha --compilers js:babel/register --watch src\\**\\*.test.js",
+    "test": "mocha --compilers js:babel/register src/**/*.test.js --watch",
+    "test:single": "mocha --compilers js:babel/register src/**/*.test.js",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "author": "Matheus Sampaio <matheus@sampaio.us> (http://matheus.sampaio.us)",
