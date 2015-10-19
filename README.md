@@ -24,3 +24,14 @@ or
 ```bash
 $ urionlinejudge -p 1001 -f 1001.cpp
 ```
+
+# Reconfigure user information
+```bash
+$ urionlinejudge --reset --problem 1001 --filepath 1001.cpp
+```
+
+or
+
+```bash
+$ urionlinejudge -r -p 1001 -f 1001.cpp
+```
