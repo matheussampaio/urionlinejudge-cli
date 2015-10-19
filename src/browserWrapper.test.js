@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import BrowserWrapper from './browserWrapper';
 
-describe('browserWrapper', () => {
+describe('BrowserWrapper', () => {
     var browserWrapper;
 
     before(() => {

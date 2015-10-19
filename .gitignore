@@ -5,4 +5,4 @@ npm-debug.log
 dist/
 
 # Ignoring user's configurations.
-config.json
+config/local.json

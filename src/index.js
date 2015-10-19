@@ -1,42 +1,60 @@
 #! /usr/bin/env node
 
 import fs from 'fs';
-import _ from 'lodash';
 import program from 'commander';
+
+import loadUser from './loadUser';
 import BrowserWrapper from './browserWrapper';
-import config from '../../config.json';
-import {version} from '../package.json';
+import { version } from '../package.json';
 
 program
     .version(version)
     .option('-p, --problem <n>', 'Submit answer for problem <n>.')
     .option('-f, --filepath <filepath>', 'Filepath with answer.')
+    .option('-r, --reset', 'reset user infos.')
     .parse(process.argv);
 
-var URLS = {
+let URLS = {
     base: 'https://www.urionlinejudge.com.br',
     problemView: '/judge/pt/problems/view/',
     problemSubmit: 'https://www.urionlinejudge.com.br/judge/pt/runs/add/',
 };
 
+let browserWrapper = new BrowserWrapper();
+
 main();
 
 function main() {
-    if (_.isEmpty(config.email) || _.isEmpty(config.password)) {
-        return console.error('Missing EMAIL and/or PASSWORD on config.json');
-    }
+    loadUser(program.reset)
+        .then(submitProblem)
+        .then(exit)
+        .catch((error) => {
+            console.error(error);
+            return exit();
+        });
+}
 
-    let browserWrapper = new BrowserWrapper();
+function exit() {
+    process.exit();
+}
+
+function submitProblem(user) {
+    if (!program.filepath) {
+        return Promise.reject('Missing filepath');
+    } else if (!program.problem) {
+        return Promise.reject('Missing problem number');
+    }
 
     const problemfile = fs.readFileSync(program.filepath, 'utf-8');
 
-    browserWrapper
+    return browserWrapper
         .createPhantom()
         .createPage()
         .open({url: URLS.base})
-        .login({email: config.email, password: config.password})
+        .login({email: user.email, password: user.password})
         .open({url: URLS.problemSubmit + program.problem})
         .submit({file: problemfile})
         .exit()
         .start();
+
 }

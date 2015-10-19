@@ -29,6 +29,7 @@ gulp.task('build:clean', () => {
 
 gulp.task('test', () => {
     return gulp.src(config.js.test, {cwd: config.src})
+        .pipe(plugins.changed(config.dist + config.js.test))
         .pipe(plugins.mocha({
             ui: 'bdd',
             reporter: 'spec',
@@ -59,7 +60,7 @@ gulp.task('lint:jshint', () => {
 });
 
 gulp.task('debug:watchers', () => {
-    gulp.watch(config.src + config.js.src, ['build:js', 'lint:jshint', 'lint:jscs', 'test']);
+    gulp.watch('**/*.js', {cwd: config.src}, ['build:js', 'lint:jshint', 'lint:jscs', 'test']);
 });
 
 gulp.task('build', (done) => {

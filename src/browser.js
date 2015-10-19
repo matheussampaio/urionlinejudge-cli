@@ -46,11 +46,7 @@ export default class Browser {
             console.info('loading %s', url);
 
             this.page.open(url, status => {
-                if (status === 'success') {
-                    setTimeout(resolve, 2000);
-                } else {
-                    reject(`open page failed (${status}): ${url}`);
-                }
+                setTimeout(resolve, 2000);
             });
         });
     }
