@@ -1,33 +1,43 @@
 import fs from 'fs';
 import _ from 'lodash';
+import path from 'path';
 import read from 'read';
-import config from 'config';
 import User from './user';
 
-let mUser = new User(config);
+let CONFIG_FILENAME = '.urionlinejudge.json';
 
-function loadEmail() {
+function loadConfig() {
+    let exists = fs.existsSync(getConfigPath());
+    let config = {};
+
+    if (exists) {
+        config = JSON.parse(fs.readFileSync(getConfigPath()));
+    }
+
+    return config;
+}
+
+function loadEmail(user) {
     return new Promise((resolve, reject) => {
-        if (_.isEmpty(mUser.email)) {
-            read({
-                prompt: 'What is your email?',
-            }, (error, answer) => {
+        if (_.isEmpty(user.email)) {
+            read({  prompt: 'What is your email?'}, (error, answer) => {
                 if (error) {
                     reject(error);
                 } else {
-                    mUser.email = answer;
-                    resolve();
+                    user.email = answer;
+
+                    resolve(user);
                 }
             });
         } else {
-            resolve();
+            resolve(user);
         }
     });
 }
 
-function loadPassword() {
+function loadPassword(user) {
     return new Promise((resolve, reject) => {
-        if (_.isEmpty(mUser.password)) {
+        if (_.isEmpty(user.password)) {
             read({
                 prompt: 'What is your password?',
                 silent: true,
@@ -36,54 +46,62 @@ function loadPassword() {
                 if (error) {
                     reject(error);
                 } else {
-                    mUser.password = answer;
-                    resolve();
+                    user.password = answer;
+
+                    resolve(user);
                 }
             });
         } else {
-            resolve();
+            resolve(user);
         }
     });
 }
 
-function loadUsername() {
+function loadUsername(user) {
     return new Promise((resolve, reject) => {
-        if (_.isEmpty(mUser.username)) {
-            read({
-                prompt: 'What is your username?',
-            }, (error, answer) => {
+        if (_.isEmpty(user.username)) {
+            read({ prompt: 'What is your username?' }, (error, answer) => {
                 if (error) {
                     reject(error);
                 } else {
-                    mUser.username = answer;
+                    user.username = answer;
 
-                    resolve();
+                    resolve(user);
                 }
             });
         } else {
-            resolve();
+            resolve(user);
         }
     });
 }
 
-function save() {
+function save(user) {
     return new Promise(resolve => {
-        var file = JSON.stringify(mUser, null, '  ');
+        let file = JSON.stringify(user, null, '  ');
 
-        fs.writeFile('./config/local.json', file, resolve);
+        fs.writeFile(getConfigPath(), file, () => {
+            resolve(user);
+        });
     });
 }
 
 export default function loadUser(reset) {
-    if (reset) {
-        mUser = new User();
+    let config = {};
+
+    if (!reset) {
+        config = loadConfig();
     }
 
-    return loadEmail()
+    return loadEmail(new User(config))
         .then(loadPassword)
         .then(loadUsername)
-        .then(save)
-        .then(() => {
-            return Promise.resolve(mUser);
-        });
+        .then(save);
+}
+
+function getUserHome() {
+    return process.env.HOME || process.env.USERPROFILE;
+}
+
+function getConfigPath() {
+    return path.join(getUserHome(), CONFIG_FILENAME);
 }
