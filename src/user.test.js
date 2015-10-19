@@ -9,7 +9,6 @@ describe('User', () => {
 
     before(() => {
         user = new User({email, password, username});
-        console.log(user);
     });
 
     it('should create user', () => {
