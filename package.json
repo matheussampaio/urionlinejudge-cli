@@ -32,12 +32,13 @@
   "dependencies": {
     "commander": "2.9.0",
     "lodash": "3.10.1",
+    "read": "1.0.7",
+    "config": "1.16.0",
     "phantom": "0.8.0"
   },
   "devDependencies": {
     "babel": "5.8.23",
     "chai": "3.3.0",
-    "config": "1.16.0",
     "del": "2.0.2",
     "ghooks": "0.3.2",
     "gulp": "3.9.0",
@@ -51,7 +52,6 @@
     "gulp-plumber": "1.0.1",
     "jshint-stylish": "2.0.1",
     "mocha": "2.3.3",
-    "read": "1.0.7",
     "run-sequence": "1.1.4",
     "semantic-release": "^4.3.5",
     "validate-commit-msg": "1.0.0"
