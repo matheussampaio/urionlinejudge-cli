@@ -5,9 +5,10 @@ import _ from 'lodash';
 import program from 'commander';
 import BrowserWrapper from './browserWrapper';
 import config from '../../config.json';
+import {version} from '../package.json';
 
 program
-    .version('0.0.1')
+    .version(version)
     .option('-p, --problem <n>', 'Submit answer for problem <n>.')
     .option('-f, --filepath <filepath>', 'Filepath with answer.')
     .parse(process.argv);
@@ -22,7 +23,7 @@ main();
 
 function main() {
     if (_.isEmpty(config.email) || _.isEmpty(config.password)) {
-        return console.error("Missing EMAIL and/or PASSWORD on config.json");
+        return console.error('Missing EMAIL and/or PASSWORD on config.json');
     }
 
     let browserWrapper = new BrowserWrapper();

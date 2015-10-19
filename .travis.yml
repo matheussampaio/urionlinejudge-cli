@@ -8,11 +8,12 @@ notifications:
 node_js:
   - '4'
 before_install:
-  - npm i -g npm@^2.0.0
+  - npm i -g npm@^2.0.0 phantomjs gulp
 before_script:
   - npm prune
 script:
-  - npm run test:single
+  - gulp build
+  - gulp test
 after_success:
   - npm run semantic-release
 branches:

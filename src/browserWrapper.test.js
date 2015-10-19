@@ -1,5 +1,5 @@
-let expect = require('chai').expect;
-let BrowserWrapper = require('./browserWrapper');
+import { expect } from 'chai';
+import BrowserWrapper from './browserWrapper';
 
 describe('browserWrapper', () => {
     var browserWrapper;

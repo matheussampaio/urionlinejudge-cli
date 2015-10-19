@@ -2,16 +2,15 @@
   "name": "urionlinejudge-cli",
   "version": "0.0.0-semantically-released",
   "description": "The URIOnlineJudge command line utility.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/matheussampaio/urionlinejudge-cli"
   },
   "scripts": {
-    "commit": "git-cz",
-    "test": "mocha --compilers js:babel/register src/**/*.test.js --watch",
-    "test:single": "mocha --compilers js:babel/register src/**/*.test.js",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "test": "gulp test",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "validate": "validate-commit-msg"
   },
   "author": "Matheus Sampaio <matheus@sampaio.us> (http://matheus.sampaio.us)",
   "bugs": {
@@ -21,8 +20,11 @@
   "license": "MIT",
   "preferGlobal": true,
   "bin": {
-    "urionlinejudge": "dist/src/index.js"
+    "urionlinejudge": "dist/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "keywords": [
     "cli",
     "urionlinejudge"
@@ -33,10 +35,7 @@
     "phantom": "0.8.0"
   },
   "devDependencies": {
-    "babel": "5.8.23",
     "chai": "3.3.0",
-    "commitizen": "2.1.0",
-    "cz-conventional-changelog": "1.1.4",
     "del": "2.0.2",
     "ghooks": "0.3.2",
     "gulp": "3.9.0",
@@ -51,14 +50,12 @@
     "jshint-stylish": "2.0.1",
     "mocha": "2.3.3",
     "run-sequence": "1.1.4",
-    "semantic-release": "^4.3.5"
-  },
-  "czConfig": {
-    "path": "node_modules/cz-conventional-changelog"
+    "semantic-release": "^4.3.5",
+    "validate-commit-msg": "1.0.0"
   },
   "config": {
     "ghooks": {
-      "pre-commit": "npm run test:single"
+      "commit-msg": "npm run validate && npm test"
     }
   }
 }
