@@ -9,10 +9,10 @@ node_js:
   - '0.12'
 before_install:
   - npm i -g npm@^2.0.0
+  - npm i -g phantomjs
 before_script:
   - npm prune
-  - npm install -g gulp
-  - npm install -g phantomjs
+  - npm i -g gulp
 script:
   - gulp build
   - gulp test
