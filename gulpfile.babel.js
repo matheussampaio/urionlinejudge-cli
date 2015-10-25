@@ -10,16 +10,13 @@ let plugins = loadPlugins({
 let config = {
     dist: 'dist/',
     port: 8100,
-    src: 'src/',
 
     js: {
-        src: [
-            '**/*.js',
-            '!**/*.test.js',
-        ],
-        test: [
-            '**/*.test.js',
-        ],
+        src: 'src/**/*.js',
+    },
+
+    test: {
+        src: 'test/**/*.js',
     },
 };
 
@@ -28,8 +25,7 @@ gulp.task('build:clean', () => {
 });
 
 gulp.task('test', () => {
-    return gulp.src(config.js.test, {cwd: config.src})
-        .pipe(plugins.changed(config.dist + config.js.test))
+    return gulp.src(config.test.src)
         .pipe(plugins.mocha({
             ui: 'bdd',
             reporter: 'spec',
@@ -37,15 +33,15 @@ gulp.task('test', () => {
 });
 
 gulp.task('build:js', () => {
-    return gulp.src(config.js.src, {cwd: config.src})
+    return gulp.src(config.js.src)
         .pipe(plugins.plumber())
-        .pipe(plugins.changed(config.dist + config.src))
+        .pipe(plugins.changed(config.js.src))
         .pipe(plugins.babel())
         .pipe(gulp.dest(config.dist));
 });
 
 gulp.task('lint:jscs', () => {
-    return gulp.src(config.js.src, {cwd: config.src})
+    return gulp.src(config.js.src)
         .pipe(plugins.jscs())
         .on('error', () => {})
         .pipe(plugins.jscsStylish())
@@ -53,14 +49,14 @@ gulp.task('lint:jscs', () => {
 });
 
 gulp.task('lint:jshint', () => {
-    return gulp.src(config.js.src, {cwd: config.src})
+    return gulp.src(config.js.src)
         .pipe(plugins.plumber())
         .pipe(plugins.jshint())
         .pipe(plugins.jshint.reporter('jshint-stylish'));
 });
 
 gulp.task('debug:watchers', () => {
-    gulp.watch('**/*.js', {cwd: config.src}, ['build:js', 'lint:jshint', 'lint:jscs', 'test']);
+    gulp.watch(config.js.src, ['build']);
 });
 
 gulp.task('build', (done) => {
@@ -69,6 +65,7 @@ gulp.task('build', (done) => {
         'build:js',
         'lint:jshint',
         'lint:jscs',
+        'test',
         done);
 });
 
