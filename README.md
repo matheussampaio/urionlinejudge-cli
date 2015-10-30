@@ -1,6 +1,8 @@
 [![Build Status](https://travis-ci.org/matheussampaio/urionlinejudge-cli.svg?branch=master)](https://travis-ci.org/matheussampaio/urionlinejudge-cli)
 [![MIT License](https://img.shields.io/npm/l/validate-commit-msg.svg?style=flat-square)](http://opensource.org/licenses/MIT)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
+[![Dependency Status](https://david-dm.org/matheussampaio/urionlinejudge-cli.svg)](https://david-dm.org/matheussampaio/urionlinejudge-cli)
+[![devDependency Status](https://david-dm.org/matheussampaio/urionlinejudge-cli/dev-status.svg)](https://david-dm.org/matheussampaio/urionlinejudge-cli#info=devDependencies)
 
 [![NPM](https://nodei.co/npm/urionlinejudge-cli.png?downloads=true)](https://nodei.co/npm/urionlinejudge-cli/)
 # URI Online Judge - CLI
