@@ -66,7 +66,7 @@ export default class Browser {
 
     submit({file}) {
         return new Promise(resolve => {
-            this.page.evaluate((file) => {
+            this.page.evaluate(file => {
                 editor.getSession().setValue(file);
                 $('.send-submit').click();
             }, () => {

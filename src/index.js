@@ -34,6 +34,7 @@ function submit() {
     return loadUser()
         .then(user => {
             return browserWrapper
+                .init({progress: 'Submiting'})
                 .createPhantom()
                 .createPage()
                 .open({url: URLS.base})
