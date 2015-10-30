@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import BrowserWrapper from '../src/browserWrapper';
 
+/** @test {BrowserWrapper} */
 describe('BrowserWrapper', () => {
     var browserWrapper;
 
@@ -8,10 +9,12 @@ describe('BrowserWrapper', () => {
         browserWrapper = new BrowserWrapper();
     });
 
+    /** @test {BrowserWrapper#start} */
     it('should return a promise when start is called', () => {
         expect(browserWrapper.start()).to.be.an.instanceof(Promise);
     });
 
+    /** @test {BrowserWrapper#actions} */
     describe('#actions', () => {
         it('should contains an actions array', () => {
             expect(browserWrapper.actions).to.be.a('array');

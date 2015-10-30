@@ -8,25 +8,24 @@ let plugins = loadPlugins({
 });
 
 let config = {
+    docs: 'docs/',
     dist: 'dist/',
     port: 8100,
-    docs: 'documentation',
+    src: 'src/',
+    test: 'test/',
 
-    js: {
-        src: 'src/**/*.js',
-    },
-
-    test: {
-        src: 'test/**/*.js',
-    },
+    js: '**/*.js',
 };
 
-gulp.task('documentation', () => {
-
-    gulp.src('./index.js')
-        .pipe(plugins.documentation({ format: 'html' }))
-        .pipe(gulp.dest(config.docs));
-
+gulp.task('docs', () => {
+    return gulp.src(config.src)
+        .pipe(plugins.esdoc({
+            destination: './' + config.docs,
+            test: {
+                type: 'mocha',
+                source: config.test,
+            },
+        }));
 });
 
 gulp.task('build:clean', () => {
@@ -34,7 +33,7 @@ gulp.task('build:clean', () => {
 });
 
 gulp.task('test', () => {
-    return gulp.src(config.test.src)
+    return gulp.src(config.js, {cwd: config.test})
         .pipe(plugins.mocha({
             ui: 'bdd',
             reporter: 'spec',
@@ -42,15 +41,15 @@ gulp.task('test', () => {
 });
 
 gulp.task('build:js', () => {
-    return gulp.src(config.js.src)
+    return gulp.src(config.js, {cwd: config.src})
         .pipe(plugins.plumber())
-        .pipe(plugins.changed(config.js.src))
+        .pipe(plugins.changed(config.js, {cwd: config.src}))
         .pipe(plugins.babel())
         .pipe(gulp.dest(config.dist));
 });
 
 gulp.task('lint:jscs', () => {
-    return gulp.src(config.js.src)
+    return gulp.src(config.js, {cwd: config.src})
         .pipe(plugins.jscs())
         .on('error', () => {})
         .pipe(plugins.jscsStylish())
@@ -58,14 +57,14 @@ gulp.task('lint:jscs', () => {
 });
 
 gulp.task('lint:jshint', () => {
-    return gulp.src(config.js.src)
+    return gulp.src(config.js, {cwd: config.src})
         .pipe(plugins.plumber())
         .pipe(plugins.jshint())
         .pipe(plugins.jshint.reporter('jshint-stylish'));
 });
 
 gulp.task('debug:watchers', () => {
-    gulp.watch(config.js.src, ['build&test']);
+    gulp.watch(config.js, {cwd: config.src}, ['build&test']);
 });
 
 gulp.task('build&test', (done) => {
