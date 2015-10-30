@@ -8,12 +8,9 @@ export default class Browser {
 
     createPhantom() {
         return new Promise((resolve, reject) => {
-            console.info('creating phantom');
-
             phantom.create(phantom => {
                 if (phantom) {
                     this.phantom = phantom;
-                    console.log('phantom created.');
                     resolve(this.phantom);
                 } else {
                     reject('error creating phantom');
@@ -28,11 +25,12 @@ export default class Browser {
 
     createPage() {
         return new Promise((resolve, reject) => {
-            console.info('creating page');
-
             this.phantom.createPage(page => {
                 if (page) {
+                    page.set('onError', () => {});
+
                     this.page = page;
+
                     resolve(this.page);
                 } else {
                     reject('error creating page');
@@ -42,10 +40,8 @@ export default class Browser {
     }
 
     open({url}) {
-        return new Promise((resolve, reject) => {
-            console.info('loading %s', url);
-
-            this.page.open(url, status => {
+        return new Promise(resolve => {
+            this.page.open(url, () => {
                 setTimeout(resolve, 2000);
             });
         });
@@ -54,8 +50,6 @@ export default class Browser {
     screenshot({filename}) {
         return new Promise((resolve, reject) => {
             if (this.page) {
-                console.info('screenshot: %s', filename);
-
                 this.page.render(filename, resolve);
             } else {
                 reject('error when taking screenshot, page is null');
@@ -65,7 +59,6 @@ export default class Browser {
 
     exit() {
         return new Promise(resolve => {
-            console.info('exiting');
             this.phantom.exit();
             resolve();
         });
@@ -73,8 +66,6 @@ export default class Browser {
 
     submit({file}) {
         return new Promise(resolve => {
-            console.log('submiting file');
-
             this.page.evaluate((file) => {
                 editor.getSession().setValue(file);
                 $('.send-submit').click();
@@ -86,8 +77,6 @@ export default class Browser {
 
     login({email, password}) {
         return new Promise(resolve => {
-            console.log('submiting email and password');
-
             this.page.evaluate((config) => {
                 document.getElementById('UserEmail').value = config.email;
                 document.getElementById('UserPassword').value = config.password;
