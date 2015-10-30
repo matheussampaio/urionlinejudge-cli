@@ -59,8 +59,13 @@ gulp.task('debug:watchers', () => {
     gulp.watch(config.js.src, ['build&test']);
 });
 
-gulp.task('build&test', ['build'], () => {
-    gulp.start('test');
+gulp.task('build&test', (done) => {
+    runSequence(
+        'build:js',
+        'lint:jshint',
+        'lint:jscs',
+        'test',
+        done);
 });
 
 gulp.task('build', (done) => {

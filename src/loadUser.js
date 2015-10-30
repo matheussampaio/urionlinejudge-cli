@@ -6,6 +6,19 @@ import User from './user';
 
 let CONFIG_FILENAME = '.urionlinejudge.json';
 
+export default function loadUser(reset) {
+    let config = {};
+
+    if (!reset) {
+        config = loadConfig();
+    }
+
+    return loadEmail(new User(config))
+        .then(loadPassword)
+        .then(loadUsername)
+        .then(save);
+}
+
 function loadConfig() {
     let exists = fs.existsSync(getConfigPath());
     let config = {};
@@ -83,19 +96,6 @@ function save(user) {
             resolve(user);
         });
     });
-}
-
-export default function loadUser(reset) {
-    let config = {};
-
-    if (!reset) {
-        config = loadConfig();
-    }
-
-    return loadEmail(new User(config))
-        .then(loadPassword)
-        .then(loadUsername)
-        .then(save);
 }
 
 function getUserHome() {

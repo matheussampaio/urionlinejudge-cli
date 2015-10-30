@@ -10,7 +10,8 @@
   "scripts": {
     "test": "gulp test",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
-    "validate": "validate-commit-msg"
+    "validate": "validate-commit-msg",
+    "start": "babel-node src/index.js"
   },
   "author": "Matheus Sampaio <matheus@sampaio.us> (http://matheus.sampaio.us)",
   "bugs": {
@@ -30,10 +31,10 @@
     "urionlinejudge"
   ],
   "dependencies": {
-    "commander": "2.9.0",
     "lodash": "3.10.1",
+    "phantom": "0.8.0",
     "read": "1.0.7",
-    "phantom": "0.8.0"
+    "yargs": "3.29.0"
   },
   "devDependencies": {
     "babel": "5.8.23",
