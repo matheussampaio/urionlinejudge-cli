@@ -1,8 +1,7 @@
+documentation/
 node_modules/
-npm-debug.log
-*.png
-
 dist/
 
-# Ignoring user's configurations.
-config/local.json
+.DS_Store
+npm-debug.log
+*.png

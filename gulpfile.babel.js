@@ -10,6 +10,7 @@ let plugins = loadPlugins({
 let config = {
     dist: 'dist/',
     port: 8100,
+    docs: 'documentation',
 
     js: {
         src: 'src/**/*.js',
@@ -19,6 +20,14 @@ let config = {
         src: 'test/**/*.js',
     },
 };
+
+gulp.task('documentation', () => {
+
+    gulp.src('./index.js')
+        .pipe(plugins.documentation({ format: 'html' }))
+        .pipe(gulp.dest(config.docs));
+
+});
 
 gulp.task('build:clean', () => {
     return del([config.dist]);
