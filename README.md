@@ -31,9 +31,3 @@ $ urionlinejudge submit -n 1001 -f 1001.cpp
 ```bash
 $ urionlinejudge reset
 ```
-
-or
-
-```bash
-$ urionlinejudge -r -p 1001 -f 1001.cpp
-```
