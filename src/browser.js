@@ -64,6 +64,8 @@ export default class Browser {
         });
     }
 
+    // Ignore JSHint because `editor` and `$` are not defined.
+    /* jshint ignore:start */
     submit({file}) {
         return new Promise(resolve => {
             this.page.evaluate(file => {
@@ -74,6 +76,7 @@ export default class Browser {
             }, file);
         });
     }
+    /* jshint ignore:end */
 
     login({email, password}) {
         return new Promise(resolve => {

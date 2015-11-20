@@ -14,7 +14,7 @@ before_script:
   - npm prune
   - npm i -g gulp
 script:
-  - gulp build
+  - gulp build --release
   - gulp test
 after_success:
   - npm run semantic-release

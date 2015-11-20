@@ -1,7 +1,15 @@
 import del from 'del';
 import gulp from 'gulp';
+import yargs from 'yargs';
 import runSequence from 'run-sequence';
 import loadPlugins from 'gulp-load-plugins';
+
+let argv = yargs
+    .option('release', {
+        description: 'Build a release version',
+        type: 'boolean',
+    })
+    .argv;
 
 let plugins = loadPlugins({
     laze: true,
@@ -42,7 +50,7 @@ gulp.task('test', () => {
 
 gulp.task('build:js', () => {
     return gulp.src(config.js, {cwd: config.src})
-        .pipe(plugins.plumber())
+        .pipe(argv.release ? plugins.plumber() : plugins.util.noop())
         .pipe(plugins.changed(config.js, {cwd: config.src}))
         .pipe(plugins.babel())
         .pipe(gulp.dest(config.dist));
@@ -51,29 +59,19 @@ gulp.task('build:js', () => {
 gulp.task('lint:jscs', () => {
     return gulp.src(config.js, {cwd: config.src})
         .pipe(plugins.jscs())
-        .on('error', () => {})
-        .pipe(plugins.jscsStylish())
-        .pipe(plugins.jscsStylish.combineWithHintResults());
+        .pipe(plugins.jscs.reporter())
+        .pipe(argv.release ? plugins.jscs.reporter('fail') : plugins.util.noop());
 });
 
 gulp.task('lint:jshint', () => {
     return gulp.src(config.js, {cwd: config.src})
-        .pipe(plugins.plumber())
+        .pipe(argv.release ? plugins.plumber() : plugins.util.noop())
         .pipe(plugins.jshint())
         .pipe(plugins.jshint.reporter('jshint-stylish'));
 });
 
 gulp.task('debug:watchers', () => {
-    gulp.watch(config.js, {cwd: config.src}, ['build&test']);
-});
-
-gulp.task('build&test', (done) => {
-    runSequence(
-        'build:js',
-        'lint:jshint',
-        'lint:jscs',
-        'test',
-        done);
+    gulp.watch(config.js, {cwd: config.src}, ['build']);
 });
 
 gulp.task('build', (done) => {
