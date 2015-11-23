@@ -1,6 +1,6 @@
 import chalk from 'chalk';
-import ProgressBar from 'progress';
 import Browser from './browser';
+import ProgressBar from 'progress';
 
 /**
  * Wrapper Browser class to make simple work with the browser.
@@ -33,11 +33,6 @@ export default class BrowserWrapper {
          * @type {Array}
          */
         this.actions = [];
-
-        /**
-         * @type {ProgressBar}
-         */
-        this.progress = null;
     }
 
     /**
@@ -77,7 +72,7 @@ export default class BrowserWrapper {
      *
      * @returns {BrowserWrapper} - The same instance (for chaining).
      */
-    createPage({debug}) {
+    createPage(debug = false) {
         return this.add({id: 'createPage', debug});
     }
 
@@ -157,6 +152,26 @@ export default class BrowserWrapper {
     }
 
     /**
+     * Add a custom function to be executed, the function should receive three params (see example).
+     *
+     * @param {Object} func - the function to be executed.
+     * @returns {BrowserWrapper} - The same instance (for chaining).
+     * @example
+     new BrowserWrapper()
+        .then(({options, resolve, reject}) => {
+            // do something
+
+            if (error) {
+                reject();
+            } else {
+                resolve();
+            }
+        });
+     */
+    then(func) {
+        return this.add({id: 'then', func});
+    }
+    /**
      * Init the progress bar.
      *
      * @param {Object} params - Options.
@@ -169,10 +184,19 @@ export default class BrowserWrapper {
             complete: chalk.green('='),
             incomplete: ' ',
             width: 40,
-            total: this.actions.length - 1,
+            total: this.actions.length - 3,
+            clear: true,
         });
 
         return Promise.resolve();
+    }
+
+    _then(action, result) {
+        return new Promise((resolve) => {
+            action.func(result);
+
+            resolve();
+        });
     }
 
     /**
@@ -182,16 +206,25 @@ export default class BrowserWrapper {
      */
     start() {
         let promise = this.actions.reduce((prev, action) => {
-            return prev.then(() => {
-                if (action.id === 'init')
+            return prev.then((result) => {
+                if (action.id === 'init') {
                     return this._init(action);
+                } else if (action.id === 'then') {
+                    return this._then(action, result);
+                }
 
-                return this.browser[action.id](action).then(() => { this.progress.tick(); });
+                return this.browser[action.id](action).then((result) => {
+                    if (this.progress) {
+                        this.progress.tick();
+                    }
+
+                    return result;
+                });
             });
         }, Promise.resolve());
 
         return promise.catch(error => {
-            console.error('promise failed: %s', error);
+            console.error('promise failed: %s', error.stack);
             process.exit();
         });
     }

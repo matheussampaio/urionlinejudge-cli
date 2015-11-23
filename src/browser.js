@@ -105,39 +105,44 @@ export default class Browser {
     /**
      * Wait for the problem be prosseced. When it's finished, print the answer.
      */
-    waitForAnswer({number}) {
+    waitForAnswer({number, availableAttempts = 10}) {
         return new Promise(resolve => {
-            this._waitForAnswer({number, resolve});
+            return this._waitForAnswer({number, resolve, availableAttempts});
         });
     }
 
-    _waitForAnswer({number, resolve}) {
-
+    _waitForAnswer({number, resolve, availableAttempts}) {
         this.page.evaluate((options) => {
             var table = document.getElementById('element').children[0];
             var tbody = table.children[1];
             var answer = '- In queue -';
 
-            for (var i = 1; i < tbody.children.length; i++) {
+            for (var i = 0; i < tbody.children.length; i++) {
                 var tr = tbody.children[i];
 
                 var tiny = tr.getElementsByClassName('tiny')[0].innerText;
-                answer = tr.getElementsByClassName('answer')[0].innerText;
 
                 if (options.number === parseInt(tiny)) {
+                    answer = tr.getElementsByClassName('answer')[0].innerText;
                     break;
                 }
+
             }
 
             return answer;
         },
         (answer) => {
             if (answer === '- In queue -') {
-                setTimeout(() => {
-                    this._waitForAnswer({number, resolve});
-                }, 2000);
+                if (availableAttempts) {
+                    availableAttempts--;
+
+                    setTimeout(() => {
+                        this._waitForAnswer({number, resolve, availableAttempts});
+                    }, 3000);
+                } else {
+                    resolve(`Can't find the answer`);
+                }
             } else {
-                console.log('ANSWER: ', answer);
                 resolve(answer);
             }
 
