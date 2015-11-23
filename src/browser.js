@@ -23,11 +23,18 @@ export default class Browser {
         });
     }
 
-    createPage() {
+    createPage({debug}) {
         return new Promise((resolve, reject) => {
             this.phantom.createPage(page => {
                 if (page) {
-                    page.set('onError', () => {});
+
+                    if (debug) {
+                        page.onConsoleMessage(function(msg) {
+                            console.log(msg);
+                        });
+                    } else {
+                        page.set('onError', () => {});
+                    }
 
                     this.page = page;
 
@@ -80,9 +87,9 @@ export default class Browser {
 
     login({email, password}) {
         return new Promise(resolve => {
-            this.page.evaluate((config) => {
-                document.getElementById('UserEmail').value = config.email;
-                document.getElementById('UserPassword').value = config.password;
+            this.page.evaluate((options) => {
+                document.getElementById('UserEmail').value = options.email;
+                document.getElementById('UserPassword').value = options.password;
                 document.forms[0].submit();
             },
             () => {
