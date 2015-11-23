@@ -43,7 +43,6 @@ export default class BrowserWrapper {
      */
     add(action) {
         this.actions.push(action);
-
         return this;
     }
 
@@ -179,12 +178,11 @@ export default class BrowserWrapper {
      * @returns {Promise} - Resolved promise.
      */
     _init({progress}) {
-
         this.progress = new ProgressBar(`[*] ${progress} [:bar] :percent :elapseds`, {
             complete: chalk.green('='),
             incomplete: ' ',
             width: 40,
-            total: this.actions.length - 3,
+            total: this.actions.length - 2,
             clear: true,
         });
 
@@ -213,20 +211,18 @@ export default class BrowserWrapper {
                     return this._then(action, result);
                 }
 
-                return this.browser[action.id](action).then((result) => {
-                    if (this.progress) {
-                        this.progress.tick();
-                    }
+                return this.browser[action.id](action)
+                    .then((result) => {
+                        if (this.progress) {
+                            this.progress.tick();
+                        }
 
-                    return result;
-                });
+                        return result;
+                    });
             });
         }, Promise.resolve());
 
-        return promise.catch(error => {
-            console.error('promise failed: %s', error.stack);
-            process.exit();
-        });
+        return promise;
     }
 
 }
