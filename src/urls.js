@@ -3,10 +3,15 @@
  *
  * @type {Object}
  */
+
+const base = 'https://www.urionlinejudge.com.br/judge/pt';
+
 const URLS = {
-    base: 'https://www.urionlinejudge.com.br',
-    problemView: '/judge/pt/problems/view/',
-    problemSubmit: 'https://www.urionlinejudge.com.br/judge/pt/runs/add/',
+    base,
+
+    problemView: base + '/problems/view/',
+    problemSubmit: base + '/runs/add/',
+    problemSubmissions: base + '/runs',
 };
 
 export default URLS;
