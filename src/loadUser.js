@@ -12,12 +12,6 @@ export default function loadUser(reset) {
 
     return _loadUser(reset)
         .then(() => {
-            if (_.isEmpty(user.username)) {
-                save = true;
-                return _askForUsername();
-            }
-        })
-        .then(() => {
             if (_.isEmpty(user.email)) {
                 save = true;
                 return _askForEmail();
@@ -71,20 +65,13 @@ function _askForPassword() {
         });
 }
 
-function _askForUsername() {
-    return _ask({
-            prompt: 'What is your username?',
-        })
-        .then(answer => {
-            user.username = answer;
-        });
-}
-
 function _ask(options) {
     return new Promise((resolve, reject) => {
         read(options, (error, answer) => {
             if (error) {
                 reject(error);
+            } else if (_.isEmpty(answer)) {
+                reject({mensage: `Can't use an empty string`});
             } else {
                 resolve(answer);
             }

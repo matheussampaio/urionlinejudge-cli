@@ -25,7 +25,13 @@ function main() {
 }
 
 function reset() {
-    return loadUser(true);
+    return loadUser(true)
+        .then((user) => {
+            console.log(`[*] ${chalk.green('Success:')} ${user.email}`);
+        })
+        .catch((error) => {
+            console.error(`\n[*] ${chalk.red('Failed:')} ${error.mensage}`);
+        });
 }
 
 function submit() {
@@ -64,5 +70,5 @@ function _showResult(answer) {
 
     const result = chalk[color](answer);
 
-    console.log(result);
+    console.log(`[*] ${result}`);
 }

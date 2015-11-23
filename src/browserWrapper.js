@@ -180,7 +180,7 @@ export default class BrowserWrapper {
      */
     _init({progress}) {
 
-        this.progress = new ProgressBar(` ${progress} [:bar] :percent :elapseds`, {
+        this.progress = new ProgressBar(`[*] ${progress} [:bar] :percent :elapseds`, {
             complete: chalk.green('='),
             incomplete: ' ',
             width: 40,

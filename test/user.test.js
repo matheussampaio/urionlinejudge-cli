@@ -24,10 +24,6 @@ describe('User', () => {
         expect(user.password).to.equal(password);
     });
 
-    it('should return the same username', () => {
-        expect(user.username).to.equal(username);
-    });
-
     it('should set new email', () => {
         let newEmail = 'new@email.com';
         user.email = newEmail;
@@ -40,9 +36,4 @@ describe('User', () => {
         expect(user.password).to.be.equal(newPassword);
     });
 
-    it('should set new username', () => {
-        let newUsername = 'newusername';
-        user.username = newUsername;
-        expect(user.username).to.be.equal(newUsername);
-    });
 });
