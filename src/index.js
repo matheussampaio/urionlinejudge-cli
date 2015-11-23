@@ -39,22 +39,35 @@ function submit() {
 
     let browserWrapper = new BrowserWrapper();
 
+    const results = {};
+
     return loadUser()
         .then(user => {
             return browserWrapper
                 .init({progress: 'Submitting'})
                 .createPhantom()
                 .createPage()
-                .open({url: URLS.base})
+                .open({url: URLS.login})
                 .login({email: user.email, password: user.password})
                 .open({url: URLS.problemSubmit + cli.number})
                 .submit({file: problemfile})
                 .open({url: URLS.problemSubmissions})
                 .waitForAnswer({number: cli.number})
-                .then(_showResult)
+                .then(answer => {
+                    results.answer = answer;
+                })
                 .exit()
                 .start();
+
+        })
+        .then(() => {
+            _showResult(results.answer);
+        })
+        .catch((error) => {
+            browserWrapper.progress.tick(1000);
+            console.log(`\n[*] ${chalk.red('Failed:')} ${error}`);
         });
+
 }
 
 function _showResult(answer) {
@@ -68,7 +81,7 @@ function _showResult(answer) {
         color = 'yellow';
     }
 
-    const result = chalk[color](answer);
+    const result = chalk[color](`${answer}: ${cli.number}`);
 
     console.log(`[*] ${result}`);
 }
