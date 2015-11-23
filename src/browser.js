@@ -102,4 +102,49 @@ export default class Browser {
         });
     }
 
+    /**
+     * Wait for the problem be prosseced. When it's finished, print the answer.
+     */
+    waitForAnswer({number}) {
+        return new Promise(resolve => {
+            this._waitForAnswer({number, resolve});
+        });
+    }
+
+    _waitForAnswer({number, resolve}) {
+
+        this.page.evaluate((options) => {
+            var table = document.getElementById('element').children[0];
+            var tbody = table.children[1];
+            var answer = '- In queue -';
+
+            for (var i = 1; i < tbody.children.length; i++) {
+                var tr = tbody.children[i];
+
+                var tiny = tr.getElementsByClassName('tiny')[0].innerText;
+                answer = tr.getElementsByClassName('answer')[0].innerText;
+
+                if (options.number === parseInt(tiny)) {
+                    break;
+                }
+            }
+
+            return answer;
+        },
+        (answer) => {
+            if (answer === '- In queue -') {
+                setTimeout(() => {
+                    this._waitForAnswer({number, resolve});
+                }, 2000);
+            } else {
+                console.log('ANSWER: ', answer);
+                resolve(answer);
+            }
+
+        },
+        {
+            number,
+        });
+    }
+
 }

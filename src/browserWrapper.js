@@ -147,6 +147,16 @@ export default class BrowserWrapper {
     }
 
     /**
+     * Add wait for answer to the stack.
+     *
+     * @param {number} number - problem number.
+     * @returns {BrowserWrapper} - The same instance (for chaining).
+     */
+    waitForAnswer({number}) {
+        return this.add({id: 'waitForAnswer', number});
+    }
+
+    /**
      * Init the progress bar.
      *
      * @param {Object} params - Options.
