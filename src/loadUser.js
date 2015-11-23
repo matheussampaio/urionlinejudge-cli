@@ -33,7 +33,8 @@ export default function loadUser(reset) {
             if (save) {
                 return _save();
             }
-        });
+        })
+        .then(() => user);
 }
 
 function _loadUser(reset) {
