@@ -77,8 +77,8 @@ export default class BrowserWrapper {
      *
      * @returns {BrowserWrapper} - The same instance (for chaining).
      */
-    createPage() {
-        return this.add({id: 'createPage'});
+    createPage({debug}) {
+        return this.add({id: 'createPage', debug});
     }
 
     /**
