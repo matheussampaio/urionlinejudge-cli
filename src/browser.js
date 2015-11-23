@@ -47,9 +47,18 @@ export default class Browser {
     }
 
     open({url}) {
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
             this.page.open(url, () => {
-                setTimeout(resolve, 2000);
+                setTimeout(() => {
+                    this.page.get('url', (pageUrl) => {
+                        if (pageUrl === url) {
+                            resolve();
+                        } else {
+                            const mensage = `Wrong page. Should be "${url}" and it's "${pageUrl}".`;
+                            reject(mensage);
+                        }
+                    });
+                }, 2000);
             });
         });
     }
