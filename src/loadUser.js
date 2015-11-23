@@ -2,106 +2,106 @@ import fs from 'fs';
 import _ from 'lodash';
 import path from 'path';
 import read from 'read';
-import User from './user';
+import User from './model/user';
 
-let CONFIG_FILENAME = '.urionlinejudge.json';
+const CONFIG_FILENAME = '.urionlinejudge.json';
+let user;
 
 export default function loadUser(reset) {
-    let config = {};
+    let save = false;
 
-    if (!reset) {
-        config = loadConfig();
+    return _loadUser(reset)
+        .then(() => {
+            if (_.isEmpty(user.username)) {
+                save = true;
+                return _askForUsername();
+            }
+        })
+        .then(() => {
+            if (_.isEmpty(user.email)) {
+                save = true;
+                return _askForEmail();
+            }
+        })
+        .then(() => {
+            if (_.isEmpty(user.password)) {
+                save = true;
+                return _askForPassword();
+            }
+        })
+        .then(() => {
+            if (save) {
+                return _save();
+            }
+        });
+}
+
+function _loadUser(reset) {
+    const exists = fs.existsSync(_getConfigPath());
+    let userConfigJSON = {};
+
+    if (exists && !reset) {
+        const userConfigPath = _getConfigPath();
+        userConfigJSON = JSON.parse(fs.readFileSync(userConfigPath));
     }
 
-    return loadEmail(new User(config))
-        .then(loadPassword)
-        .then(loadUsername)
-        .then(save);
+    user = new User(userConfigJSON);
+
+    return Promise.resolve();
 }
 
-function loadConfig() {
-    let exists = fs.existsSync(getConfigPath());
-    let config = {};
-
-    if (exists) {
-        config = JSON.parse(fs.readFileSync(getConfigPath()));
-    }
-
-    return config;
+function _askForEmail() {
+    return _ask({
+            prompt: 'What is your email?',
+        })
+        .then(answer => {
+            user.email = answer;
+        });
 }
 
-function loadEmail(user) {
+function _askForPassword() {
+    return _ask({
+            prompt: 'What is your password?',
+            silent: true,
+            replace: '*',
+        })
+        .then(answer => {
+            user.password = answer;
+        });
+}
+
+function _askForUsername() {
+    return _ask({
+            prompt: 'What is your username?',
+        })
+        .then(answer => {
+            user.username = answer;
+        });
+}
+
+function _ask(options) {
     return new Promise((resolve, reject) => {
-        if (_.isEmpty(user.email)) {
-            read({  prompt: 'What is your email?'}, (error, answer) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    user.email = answer;
-
-                    resolve(user);
-                }
-            });
-        } else {
-            resolve(user);
-        }
+        read(options, (error, answer) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(answer);
+            }
+        });
     });
 }
 
-function loadPassword(user) {
-    return new Promise((resolve, reject) => {
-        if (_.isEmpty(user.password)) {
-            read({
-                prompt: 'What is your password?',
-                silent: true,
-                replace: '*',
-            }, (error, answer) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    user.password = answer;
-
-                    resolve(user);
-                }
-            });
-        } else {
-            resolve(user);
-        }
-    });
-}
-
-function loadUsername(user) {
-    return new Promise((resolve, reject) => {
-        if (_.isEmpty(user.username)) {
-            read({ prompt: 'What is your username?' }, (error, answer) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    user.username = answer;
-
-                    resolve(user);
-                }
-            });
-        } else {
-            resolve(user);
-        }
-    });
-}
-
-function save(user) {
+function _save() {
     return new Promise(resolve => {
-        let file = JSON.stringify(user, null, '  ');
+        const file = JSON.stringify(user, null, '  ');
 
-        fs.writeFile(getConfigPath(), file, () => {
+        fs.writeFile(_getConfigPath(), file, () => {
             resolve(user);
         });
     });
 }
 
-function getUserHome() {
-    return process.env.HOME || process.env.USERPROFILE;
-}
-
-function getConfigPath() {
-    return path.join(getUserHome(), CONFIG_FILENAME);
+function _getConfigPath() {
+    const homePath = process.env.HOME || process.env.USERPROFILE;
+    return path.join(homePath, CONFIG_FILENAME);
 }

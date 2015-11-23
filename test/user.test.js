@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import User from '../src/user';
+import User from '../src/model/user';
 
 describe('User', () => {
     let email = 'test@email.com';
