@@ -10,8 +10,7 @@
   "scripts": {
     "test": "gulp test",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
-    "validate": "validate-commit-msg",
-    "start": "babel-node src/index.js"
+    "commit": "commit-wizard"
   },
   "author": "Matheus Sampaio <matheus@sampaio.us> (http://matheus.sampaio.us)",
   "bugs": {
@@ -33,37 +32,41 @@
   "dependencies": {
     "chalk": "1.1.1",
     "lodash": "3.10.1",
-    "phantom": "0.8.0",
+    "phantom": "0.8.3",
     "progress": "1.1.8",
     "read": "1.0.7",
-    "yargs": "3.29.0"
+    "yargs": "3.30.0"
   },
   "devDependencies": {
-    "babel": "5.8.23",
-    "chai": "3.3.0",
-    "del": "2.0.2",
-    "ghooks": "0.3.2",
+    "chai": "3.4.1",
+    "del": "2.1.0",
     "gulp": "3.9.0",
     "gulp-babel": "5.2.1",
     "gulp-changed": "1.3.0",
-    "gulp-documentation": "1.0.1",
-    "gulp-esdoc": "0.1.0",
-    "gulp-jscs": "3.0.1",
+    "gulp-esdoc": "0.2.0",
+    "gulp-jscs": "3.0.2",
     "gulp-jscs-stylish": "1.2.1",
-    "gulp-jshint": "1.11.2",
-    "gulp-load-plugins": "0.10.0",
-    "gulp-mocha": "2.1.3",
+    "gulp-jshint": "2.0.0",
+    "gulp-load-plugins": "1.1.0",
+    "gulp-mocha": "2.2.0",
     "gulp-plumber": "1.0.1",
     "gulp-util": "3.0.7",
-    "jshint-stylish": "2.0.1",
-    "mocha": "2.3.3",
-    "run-sequence": "1.1.4",
+    "jshint": "2.8.0",
+    "jshint-stylish": "2.1.0",
+    "pre-git": "1.3.1",
+    "run-sequence": "1.1.5",
     "semantic-release": "^4.3.5",
     "validate-commit-msg": "1.0.0"
   },
   "config": {
-    "ghooks": {
-      "commit-msg": "npm run validate && npm test"
+    "pre-git": {
+      "commit-msg": "validate-commit-msg",
+      "pre-push": [
+        "rm -rf node_modules",
+        "npm install",
+        "gulp build",
+        "gulp test"
+      ]
     }
   }
 }
