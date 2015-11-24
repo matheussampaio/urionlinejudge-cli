@@ -17,11 +17,11 @@ export default class User {
         /**
          * @type {string}
          */
-        this.email = email;
+      this.email = email;
 
         /**
          * @type {string}
          */
-        this.password = password;
+      this.password = password;
     }
 }

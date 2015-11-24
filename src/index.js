@@ -11,39 +11,37 @@ import BrowserWrapper from './browserWrapper';
 main();
 
 function main() {
-    const commands = {
-        reset: reset,
-        submit: submit,
-    };
+  const commands = {
+    reset: reset,
+    submit: submit,
+  };
 
-    commands[cli.command]()
+  commands[cli.command]()
         .then(process.exit)
         .catch((error) => {
-            console.error(error);
-            return process.exit();
+          console.error(error);
+          return process.exit();
         });
 }
 
 function reset() {
-    return loadUser(true)
+  return loadUser(true)
         .then((user) => {
-            console.log(`[*] ${chalk.green('Success:')} ${user.email}`);
+          console.log(`[*] ${chalk.green('Success:')} ${user.email}`);
         })
         .catch((error) => {
-            console.error(`\n[*] ${chalk.red('Failed:')} ${error.mensage}`);
+          console.error(`\n[*] ${chalk.red('Failed:')} ${error.mensage}`);
         });
 }
 
 function submit() {
-    const problemfile = fs.readFileSync(cli.filepath, 'utf-8');
+  const problemfile = fs.readFileSync(cli.filepath, 'utf-8');
+  const browserWrapper = new BrowserWrapper();
+  const results = {};
 
-    let browserWrapper = new BrowserWrapper();
-
-    const results = {};
-
-    return loadUser()
+  return loadUser()
         .then(user => {
-            return browserWrapper
+          return browserWrapper
                 .init({progress: 'Submitting'})
                 .createPhantom()
                 .createPage()
@@ -54,34 +52,32 @@ function submit() {
                 .open({url: URLS.problemSubmissions})
                 .waitForAnswer({number: cli.number})
                 .then(answer => {
-                    results.answer = answer;
+                  results.answer = answer;
                 })
                 .exit()
                 .start();
-
         })
         .then(() => {
-            _showResult(results.answer);
+          _showResult(results.answer);
         })
         .catch((error) => {
-            browserWrapper.progress.tick(1000);
-            console.log(`\n[*] ${chalk.red('Failed:')} ${error}`);
+          browserWrapper.progress.tick(1000);
+          console.log(`\n[*] ${chalk.red('Failed:')} ${error}`);
         });
-
 }
 
 function _showResult(answer) {
-    let color = 'red';
+  let color = 'red';
 
-    if (_.contains(answer.toLowerCase(), 'accepted')) {
-        color = 'green';
-    } else if (_.contains(answer.toLowerCase(), 'wrong')) {
-        color = 'red';
-    } else if (_.contains(answer.toLowerCase(), 'compilation')) {
-        color = 'yellow';
-    }
+  if (_.contains(answer.toLowerCase(), 'accepted')) {
+    color = 'green';
+  } else if (_.contains(answer.toLowerCase(), 'wrong')) {
+    color = 'red';
+  } else if (_.contains(answer.toLowerCase(), 'compilation')) {
+    color = 'yellow';
+  }
 
-    const result = chalk[color](`${answer}: ${cli.number}`);
+  const result = chalk[color](`${answer}: ${cli.number}`);
 
-    console.log(`[*] ${result}`);
+  console.log(`[*] ${result}`);
 }

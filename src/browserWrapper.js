@@ -27,12 +27,12 @@ export default class BrowserWrapper {
         /**
          * @type {Browser}
          */
-        this.browser = new Browser();
+      this.browser = new Browser();
 
         /**
          * @type {Array}
          */
-        this.actions = [];
+      this.actions = [];
     }
 
     /**
@@ -42,8 +42,8 @@ export default class BrowserWrapper {
      * @returns {BrowserWrapper} - The same instance (for chaining).
      */
     add(action) {
-        this.actions.push(action);
-        return this;
+      this.actions.push(action);
+      return this;
     }
 
     /**
@@ -54,7 +54,7 @@ export default class BrowserWrapper {
      * @returns {BrowserWrapper} - The same instance (for chaining).
      */
     init({progress}) {
-        return this.add({id: 'init', progress});
+      return this.add({id: 'init', progress});
     }
 
     /**
@@ -63,7 +63,7 @@ export default class BrowserWrapper {
      * @returns {BrowserWrapper} - The same instance (for chaining).
      */
     createPhantom() {
-        return this.add({id: 'createPhantom'});
+      return this.add({id: 'createPhantom'});
     }
 
     /**
@@ -72,7 +72,7 @@ export default class BrowserWrapper {
      * @returns {BrowserWrapper} - The same instance (for chaining).
      */
     createPage(debug = false) {
-        return this.add({id: 'createPage', debug});
+      return this.add({id: 'createPage', debug});
     }
 
     /**
@@ -83,7 +83,7 @@ export default class BrowserWrapper {
      * @returns {BrowserWrapper} - The same instance (for chaining).
      */
     open({url}) {
-        return this.add({id: 'open', url});
+      return this.add({id: 'open', url});
     }
 
     /**
@@ -94,7 +94,7 @@ export default class BrowserWrapper {
      * @returns {BrowserWrapper} - The same instance (for chaining).
      */
     screenshot({filename}) {
-        return this.add({id: 'screenshot', filename});
+      return this.add({id: 'screenshot', filename});
     }
 
     /**
@@ -103,7 +103,7 @@ export default class BrowserWrapper {
      * @returns {BrowserWrapper} The same instance (for chaining).
      */
     exit() {
-        return this.add({id: 'exit'});
+      return this.add({id: 'exit'});
     }
 
     /**
@@ -114,7 +114,7 @@ export default class BrowserWrapper {
      * @returns {BrowserWrapper} - The same instance (for chaining).
      */
     submit({file}) {
-        return this.add({id: 'submit', file});
+      return this.add({id: 'submit', file});
     }
 
     /**
@@ -126,7 +126,7 @@ export default class BrowserWrapper {
      * @returns {BrowserWrapper} - The same instance (for chaining).
      */
     login({email, password}) {
-        return this.add({id: 'login', email, password});
+      return this.add({id: 'login', email, password});
     }
 
     /**
@@ -137,7 +137,7 @@ export default class BrowserWrapper {
      * @returns {BrowserWrapper} - The same instance (for chaining).
      */
     wait({time}) {
-        return this.add({id: 'wait', time});
+      return this.add({id: 'wait', time});
     }
 
     /**
@@ -147,7 +147,7 @@ export default class BrowserWrapper {
      * @returns {BrowserWrapper} - The same instance (for chaining).
      */
     waitForAnswer({number}) {
-        return this.add({id: 'waitForAnswer', number});
+      return this.add({id: 'waitForAnswer', number});
     }
 
     /**
@@ -168,7 +168,7 @@ export default class BrowserWrapper {
         });
      */
     then(func) {
-        return this.add({id: 'then', func});
+      return this.add({id: 'then', func});
     }
     /**
      * Init the progress bar.
@@ -178,23 +178,23 @@ export default class BrowserWrapper {
      * @returns {Promise} - Resolved promise.
      */
     _init({progress}) {
-        this.progress = new ProgressBar(`[*] ${progress} [:bar] :percent :elapseds`, {
-            complete: chalk.green('='),
-            incomplete: ' ',
-            width: 40,
-            total: this.actions.length - 2,
-            clear: true,
-        });
+      this.progress = new ProgressBar(`[*] ${progress} [:bar] :percent :elapseds`, {
+        complete: chalk.green('='),
+        incomplete: ' ',
+        width: 40,
+        total: this.actions.length - 2,
+        clear: true,
+      });
 
-        return Promise.resolve();
+      return Promise.resolve();
     }
 
     _then(action, result) {
-        return new Promise((resolve) => {
-            action.func(result);
+      return new Promise((resolve) => {
+        action.func(result);
 
-            resolve();
-        });
+        resolve();
+      });
     }
 
     /**
@@ -203,26 +203,26 @@ export default class BrowserWrapper {
      * @returns {Promise} - Promise with every actions.
      */
     start() {
-        let promise = this.actions.reduce((prev, action) => {
-            return prev.then((result) => {
-                if (action.id === 'init') {
-                    return this._init(action);
-                } else if (action.id === 'then') {
-                    return this._then(action, result);
-                }
+      const promise = this.actions.reduce((prev, action) => {
+        return prev.then((result) => {
+          if (action.id === 'init') {
+            return this._init(action);
+          } else if (action.id === 'then') {
+            return this._then(action, result);
+          }
 
-                return this.browser[action.id](action)
-                    .then((result) => {
-                        if (this.progress) {
-                            this.progress.tick();
-                        }
+          return this.browser[action.id](action)
+            .then((res) => {
+              if (this.progress) {
+                this.progress.tick();
+              }
 
-                        return result;
-                    });
+              return res;
             });
-        }, Promise.resolve());
+        });
+      }, Promise.resolve());
 
-        return promise;
+      return promise;
     }
 
 }

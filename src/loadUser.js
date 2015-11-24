@@ -7,89 +7,89 @@ import User from './model/user';
 const CONFIG_FILENAME = '.urionlinejudge.json';
 let user;
 
-export default function loadUser(reset) {
-    let save = false;
-
-    return _loadUser(reset)
-        .then(() => {
-            if (_.isEmpty(user.email)) {
-                save = true;
-                return _askForEmail();
-            }
-        })
-        .then(() => {
-            if (_.isEmpty(user.password)) {
-                save = true;
-                return _askForPassword();
-            }
-        })
-        .then(() => {
-            if (save) {
-                return _save();
-            }
-        })
-        .then(() => user);
+function _getConfigPath() {
+  const homePath = process.env.HOME || process.env.USERPROFILE;
+  return path.join(homePath, CONFIG_FILENAME);
 }
 
 function _loadUser(reset) {
-    const exists = fs.existsSync(_getConfigPath());
-    let userConfigJSON = {};
+  const exists = fs.existsSync(_getConfigPath());
+  let userConfigJSON = {};
 
-    if (exists && !reset) {
-        const userConfigPath = _getConfigPath();
-        userConfigJSON = JSON.parse(fs.readFileSync(userConfigPath));
-    }
+  if (exists && !reset) {
+    const userConfigPath = _getConfigPath();
+    userConfigJSON = JSON.parse(fs.readFileSync(userConfigPath));
+  }
 
-    user = new User(userConfigJSON);
+  user = new User(userConfigJSON);
 
-    return Promise.resolve();
+  return Promise.resolve();
+}
+
+function _ask(options) {
+  return new Promise((resolve, reject) => {
+    read(options, (error, answer) => {
+      if (error) {
+        reject(error);
+      } else if (_.isEmpty(answer)) {
+        reject({mensage: `Can't use an empty string`});
+      } else {
+        resolve(answer);
+      }
+    });
+  });
 }
 
 function _askForEmail() {
-    return _ask({
-            prompt: 'What is your email?',
-        })
+  return _ask({
+    prompt: 'What is your email?',
+  })
         .then(answer => {
-            user.email = answer;
+          user.email = answer;
         });
 }
 
 function _askForPassword() {
-    return _ask({
-            prompt: 'What is your password?',
-            silent: true,
-            replace: '*',
-        })
+  return _ask({
+    prompt: 'What is your password?',
+    silent: true,
+    replace: '*',
+  })
         .then(answer => {
-            user.password = answer;
+          user.password = answer;
         });
-}
-
-function _ask(options) {
-    return new Promise((resolve, reject) => {
-        read(options, (error, answer) => {
-            if (error) {
-                reject(error);
-            } else if (_.isEmpty(answer)) {
-                reject({mensage: `Can't use an empty string`});
-            } else {
-                resolve(answer);
-            }
-        });
-    });
 }
 
 function _save() {
-    return new Promise(resolve => {
-        const file = JSON.stringify(user, null, '  ');
+  return new Promise(resolve => {
+    const file = JSON.stringify(user, null, '  ');
 
-        fs.writeFile(_getConfigPath(), file, () => {
-            resolve(user);
-        });
+    fs.writeFile(_getConfigPath(), file, () => {
+      resolve(user);
     });
+  });
 }
 
-function _getConfigPath() {
-    const homePath = process.env.HOME || process.env.USERPROFILE;
-    return path.join(homePath, CONFIG_FILENAME);
+export default function loadUser(reset) {
+  let save = false;
+
+  return _loadUser(reset)
+        .then(() => {
+          if (_.isEmpty(user.email)) {
+            save = true;
+            return _askForEmail();
+          }
+        })
+        .then(() => {
+          if (_.isEmpty(user.password)) {
+            save = true;
+            return _askForPassword();
+          }
+        })
+        .then(() => {
+          if (save) {
+            return _save();
+          }
+        })
+        .then(() => user);
 }
