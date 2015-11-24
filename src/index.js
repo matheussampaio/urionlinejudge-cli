@@ -6,11 +6,15 @@ import cli from './cli';
 import chalk from 'chalk';
 import URLS from './urls';
 import loadUser from './loadUser';
+import checkUpdate from './checkUpdate';
 import BrowserWrapper from './browserWrapper';
 
 main();
 
 function main() {
+  // always check for updates
+  checkUpdate();
+
   const commands = {
     reset: reset,
     submit: submit,
