@@ -9,7 +9,8 @@
   },
   "scripts": {
     "test": "gulp test",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "commit": "commit-wizard"
   },
   "author": "Matheus Sampaio <matheus@sampaio.us> (http://matheus.sampaio.us)",
   "bugs": {
@@ -64,7 +65,10 @@
         "npm install",
         "gulp build",
         "gulp test"
-      ]
+      ],
+      "pre-commit": [],
+      "post-commit": [],
+      "post-merge": []
     }
   },
   "babel": {
