@@ -52,7 +52,9 @@ gulp.task('build:js', () => {
     return gulp.src(config.js, {cwd: config.src})
         .pipe(argv.release ? plugins.plumber() : plugins.util.noop())
         .pipe(plugins.changed(config.js, {cwd: config.src}))
-        .pipe(plugins.babel())
+        .pipe(plugins.babel({
+            presets: ['es2015'],
+        }))
         .pipe(gulp.dest(config.dist));
 });
 
