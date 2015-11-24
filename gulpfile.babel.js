@@ -83,13 +83,23 @@ function isFixed(file) {
   return file.eslint && file.eslint.fixed;
 }
 
-gulp.task('build:lint', () => {
-  return gulp.src(['**/*.js', '!dist/**', '!node_modules/**', '!docs/**'])
+gulp.task('build:lint:src', () => {
+  return gulp.src(config.js, { cwd: config.src })
   .pipe(plugins.eslint({
     fix: argv.fix,
   }))
   .pipe(plugins.eslint.format())
-  .pipe(plugins.if(isFixed, gulp.dest('.')))
+  .pipe(plugins.if(isFixed, gulp.dest(config.src)))
+  .pipe(argv.release ? plugins.eslint.failAfterError() : plugins.util.noop());
+});
+
+gulp.task('build:lint:test', () => {
+  return gulp.src(config.js, { cwd: config.test })
+  .pipe(plugins.eslint({
+    fix: argv.fix,
+  }))
+  .pipe(plugins.eslint.format())
+  .pipe(plugins.if(isFixed, gulp.dest(config.test)))
   .pipe(argv.release ? plugins.eslint.failAfterError() : plugins.util.noop());
 });
 
@@ -97,7 +107,8 @@ gulp.task('build', (done) => {
   runSequence(
     'build:clean',
     'build:js',
-    'build:lint',
+    'build:lint:src',
+    'build:lint:test',
     done);
 });
 
