@@ -103,14 +103,17 @@ gulp.task('build:lint:test', () => {
   .pipe(argv.release ? plugins.eslint.failAfterError() : plugins.util.noop());
 });
 
-gulp.task('build', (done) => {
+gulp.task('package', () => {
   gulp.src('./package.json')
     .pipe(plugins.jsonEditor({
       'debug': !argv.release,
     }))
     .pipe(gulp.dest('.'));
+});
 
+gulp.task('build', (done) => {
   runSequence(
+    'package',
     'build:clean',
     'build:js',
     'build:lint:src',
