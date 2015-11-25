@@ -2,7 +2,8 @@ import fs from 'fs';
 import _ from 'lodash';
 import path from 'path';
 import read from 'read';
-import User from './model/user';
+
+import User from './model/User';
 
 const CONFIG_FILENAME = '.urionlinejudge.json';
 let user;
