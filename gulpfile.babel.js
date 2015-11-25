@@ -113,7 +113,7 @@ gulp.task('package', () => {
 
 gulp.task('build', (done) => {
   runSequence(
-    'package',
+    // 'package',
     'build:clean',
     'build:js',
     'build:lint:src',
