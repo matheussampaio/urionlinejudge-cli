@@ -92,7 +92,7 @@ function checkForUpdate() {
       packageVersion: version,
       isCLI: true,
     }, (err, latestVersion, defaultMessage) => {
-      if (!err) {
+      if (!err && version !== latestVersion) {
         console.log(defaultMessage + '\n');
       }
       resolve();
