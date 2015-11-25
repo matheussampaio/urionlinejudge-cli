@@ -30,7 +30,7 @@ export default class URIOnlineJudge {
         .open({url: URIOnlineJudgeURLS.login})
         .login({email: email, password: password})
         .open({url: URIOnlineJudgeURLS.problemSubmit + problem})
-        // .submit({file: file})
+        .submit({file: file})
         .open({url: URIOnlineJudgeURLS.problemSubmissions})
         .waitForAnswer({number: problem})
         .then(answer => {

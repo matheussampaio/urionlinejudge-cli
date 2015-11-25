@@ -16,7 +16,6 @@ function main() {
   // always check for updates
   checkForUpdate()
     .then(() => command());
-
 }
 
 function command() {

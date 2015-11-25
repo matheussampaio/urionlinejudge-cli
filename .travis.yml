@@ -8,7 +8,7 @@ notifications:
 node_js:
   - '5.1.0'
 before_install:
-  - npm i -g npm@^3.3.12
+  - npm i -g npm@^3.5.0
   - npm i -g phantomjs
 before_script:
   - npm prune
