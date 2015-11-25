@@ -4,6 +4,8 @@ import yargs from 'yargs';
 import runSequence from 'run-sequence';
 import loadPlugins from 'gulp-load-plugins';
 
+import packageJson from './package.json';
+
 const argv = yargs
   .option('release', {
     description: 'Build a release version',
@@ -104,7 +106,7 @@ gulp.task('build:lint:test', () => {
 });
 
 gulp.task('package', () => {
-  gulp.src('./package.json')
+  return gulp.src('./package.json')
     .pipe(plugins.jsonEditor({
       'debug': !argv.release,
     }))
@@ -113,7 +115,7 @@ gulp.task('package', () => {
 
 gulp.task('build', (done) => {
   runSequence(
-    // 'package',
+    'package',
     'build:clean',
     'build:js',
     'build:lint:src',
