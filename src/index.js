@@ -6,8 +6,11 @@ import cli from './cli';
 import chalk from 'chalk';
 import URLS from './urls';
 import loadUser from './loadUser';
+import Analytics from './analytics';
 import checkUpdate from './checkUpdate';
 import BrowserWrapper from './browserWrapper';
+
+const analytics = new Analytics();
 
 main();
 
@@ -21,6 +24,9 @@ function main() {
   };
 
   commands[cli.command]()
+        .then(() => {
+          return analytics.flush();
+        })
         .then(process.exit)
         .catch((error) => {
           console.error(error);
@@ -62,11 +68,23 @@ function submit() {
                 .start();
         })
         .then(() => {
+          return analytics.submit({
+            problem: cli.number,
+            result: results.answer,
+          });
+        })
+        .then(() => {
           _showResult(results.answer);
         })
         .catch((error) => {
           browserWrapper.progress.tick(1000);
           console.log(`\n[*] ${chalk.red('Failed:')} ${error}`);
+
+          return analytics.error({
+            command: 'submit',
+            problem: cli.number,
+            error: error,
+          });
         });
 }
 
