@@ -59,7 +59,7 @@ gulp.task('build:js', () => {
   return gulp.src(config.js, {
     cwd: config.src,
   })
-  .pipe(argv.release ? plugins.plumber() : plugins.util.noop())
+  .pipe(argv.release ? plugins.util.noop() : plugins.plumber())
   .pipe(plugins.changed(config.js, {
     cwd: config.src,
   }))
@@ -72,11 +72,11 @@ gulp.task('build:js', () => {
 gulp.task('debug:watchers', () => {
   gulp.watch(config.js, {
     cwd: config.src,
-  }, ['build']);
+  }, ['build:js', 'build:lint:src']);
 
   gulp.watch(config.js, {
     cwd: config.test,
-  }, ['test', 'build:test']);
+  }, ['test', 'build:lint:test']);
 });
 
 function isFixed(file) {
@@ -104,6 +104,12 @@ gulp.task('build:lint:test', () => {
 });
 
 gulp.task('build', (done) => {
+  gulp.src('./package.json')
+    .pipe(plugins.jsonEditor({
+      'debug': !argv.release,
+    }))
+    .pipe(gulp.dest('.'));
+
   runSequence(
     'build:clean',
     'build:js',
