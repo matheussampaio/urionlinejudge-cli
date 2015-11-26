@@ -80,5 +80,13 @@
     "presets": [
       "es2015"
     ]
-  }
+  },
+  "publishConfig": {
+    "tag": "next"
+  },
+  "engines": {
+    "node": "5.1.0",
+    "npm": "3.3.12"
+  },
+  "os": ["!osx"]
 }
