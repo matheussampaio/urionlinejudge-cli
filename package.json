@@ -66,8 +66,6 @@
     "pre-git": {
       "commit-msg": "validate-commit-msg",
       "pre-push": [
-        "rm -rf node_modules",
-        "npm install",
         "gulp build",
         "gulp test"
       ],
