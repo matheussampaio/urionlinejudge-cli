@@ -9,14 +9,8 @@
 
 ## Installing
 
-**Stable version:**
 ```bash
 $ npm install -g phantomjs urionlinejudge-cli
-```
-
-**Developer version:**
-```
-$ npm install -g phantomjs urionlinejudge-cli@next
 ```
 
 *Note: For a global install of `-g urionlinejudge-cli`, OSX/Linux users may need to prefix the command with `sudo` or can setup [proper file permissions on OSX for npm](http://www.johnpapa.net/how-to-use-npm-global-without-sudo-on-osx/) to install without `sudo`. *
