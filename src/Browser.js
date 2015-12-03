@@ -43,6 +43,33 @@ export default class Browser {
       });
     }
 
+    fetchDescription() {
+      return new Promise((resolve, reject) => {
+        this.page.evaluate(() => {
+          const iframe = $('#description-html').contents(); //eslint-disable-line
+
+          const problem = {
+            title: iframe.find('.header>h1')[0].textContent.trim(),
+            timelimit: iframe.find('.header>strong')[0].textContent.trim(),
+            description: iframe.find('.problem .description')[0].textContent.trim(),
+            input: iframe.find('.problem .input')[0].textContent.trim(),
+            output: iframe.find('.problem .output')[0].textContent.trim(),
+          };
+
+          return problem;
+        },
+          (problem) => {
+            if (problem) {
+              resolve(problem);
+            } else {
+              reject(`Description not found. Did this problem exist?`);
+            }
+          },
+          {
+          });
+      });
+    }
+
     open({url}) {
       return new Promise((resolve, reject) => {
         this.page.open(url, () => {

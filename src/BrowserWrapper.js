@@ -77,6 +77,15 @@ export default class BrowserWrapper {
     }
 
     /**
+     * Fetch a problem description from the page.
+     *
+     * @returns {BrowserWrapper} - The same instance (for chaining).
+     */
+    fetchDescription() {
+      return this.add({id: 'fetchDescription'});
+    }
+
+    /**
      * Add open page action to the stack.
      *
      * @param {Object} action - The action.

@@ -1,10 +1,11 @@
 #! /usr/bin/env node
 
 import fs from 'fs';
-import chalk from 'chalk';
+import path from 'path';
 import checkUpdate from 'check-update';
 
 import CLI from './CLI';
+import Log from './Log';
 import loadUser from './loadUser';
 import Analytics from './Analytics';
 import URIOnlineJudge from './URIOnlineJudge';
@@ -22,18 +23,23 @@ function command() {
   const commands = {
     reset: reset,
     submit: submit,
+    fetch: fetch,
   };
 
-  commands[CLI.command]()
-    // flush every analytics
-    .then(() => {
-      return Analytics.flush();
-    })
-    // make sure the process is finished.
-    .then(process.exit)
-    .catch(() => {
-      console.log('here');
-    });
+  if (commands[CLI.command] !== undefined) {
+    commands[CLI.command]()
+      // flush every analytics
+      .then(() => {
+        return Analytics.flush();
+      })
+      .catch((error) => {
+        Log.error(error);
+      })
+      // make sure the process is finished.
+      .then(process.exit);
+  } else {
+    Log.error(`Command '${CLI.command}' not found.`);
+  }
 }
 
 /**
@@ -42,10 +48,10 @@ function command() {
 function reset() {
   return loadUser(true)
     .then((user) => {
-      console.log(`[*] ${chalk.green('Success:')} ${user.email}`);
+      Log.success(`Email: ${user.email}`);
     })
     .catch((error) => {
-      console.error(`\n\n[*] ${chalk.red(error)}`);
+      Log.error(error);
     });
 }
 
@@ -80,6 +86,126 @@ function submit() {
         error: error,
       });
     });
+}
+
+/**
+ * Fetch a question from the URI Online Judge Website
+ */
+function fetch() {
+  const force = CLI.force;
+  const problemNumber = CLI.number;
+  const injectValue = `// urionlinejudge::description`;
+
+  const extname = path.extname(CLI.template);
+  const outputFilepath = path.join(CLI.output, `${problemNumber}${extname}`);
+
+  const templateFile = fs.readFileSync(CLI.template, 'utf-8');
+
+  return checkTemplate({
+    force,
+    injectValue,
+    templateFile,
+    problemNumber,
+    outputFilepath,
+  })
+  .then(() => {
+    return URIOnlineJudge.fetch({
+      problemNumber,
+    });
+  })
+  .then(problem => {
+    return injectDescription({
+      problem,
+      injectValue,
+      templateFile,
+      problemNumber,
+      outputFilepath,
+    });
+  })
+  .then(() => {
+    Log.success(`Problem fetched: ${outputFilepath}`);
+  });
+}
+
+/**
+ * Check if template already exists and reject if force is false.
+ * Check if template contains INJECT_VALUE, reject if don't.
+ */
+function checkTemplate({injectValue, templateFile, templateFilepath, outputFilepath, problemNumber, force}) {
+  return new Promise((resolve, reject) => {
+    let exists = true;
+
+    try {
+      fs.accessSync(outputFilepath);
+    } catch (e) {
+      exists = false;
+    }
+
+    // Verify if template contains INJECT_VALUE
+    if (templateFile.indexOf(injectValue) === -1) {
+      reject([
+        `Can't find the inject string.`,
+        `Make sure that your template contains '${injectValue}'.`,
+      ]);
+    // reject if force is false and file already exists
+    } else if (!force && exists) {
+      reject([
+        `This file ${outputFilepath} already exists. Use -f or --force if you want to overwrite:`,
+        `urionlinejudge fetch -f -n ${problemNumber} -t ${templateFilepath} -o ${outputFilepath}`,
+      ]);
+    } else {
+      resolve();
+    }
+  });
+}
+
+function injectDescription({problem, injectValue, outputFilepath, templateFile}) {
+  return new Promise(resolve => {
+    const desc = [
+      `/*`,
+      ` * Title:`,
+      `${prepareString(problem.title)}`,
+      ` *`,
+      `${prepareString(problem.timelimit)}`,
+      ` *`,
+      ` * Description:`,
+      `${prepareString(problem.description)}`,
+      ` *`,
+      ` * Input:`,
+      `${prepareString(problem.input)}`,
+      ` *`,
+      ` * Output:`,
+      `${prepareString(problem.output)}`,
+      ` *`,
+      ` */`,
+    ].join('\n');
+
+    templateFile = templateFile.replace(injectValue, desc);
+
+    fs.writeFileSync(outputFilepath, templateFile);
+
+    resolve();
+  });
+}
+
+function prepareString(str) {
+  const words = str.split(' ');
+  const start = ` * `;
+  let output = ``;
+  let newline = start;
+
+  for (const w of words) {
+    if (newline.length + w.length >= 79) {
+      output += newline.trimRight() + '\n';
+      newline = start;
+    }
+
+    newline += w + ' ';
+  }
+
+  output += newline.trimRight();
+
+  return output;
 }
 
 /**

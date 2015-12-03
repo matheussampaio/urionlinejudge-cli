@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import chalk from 'chalk';
 
+import Log from './Log';
 import BrowserWrapper from './BrowserWrapper';
 import URIOnlineJudgeURLS from './URIOnlineJudgeURLS.js';
 
@@ -15,7 +16,7 @@ export default class URIOnlineJudge {
    * @param {Object} params - params object.
    * @param {string} params.email - User email.
    * @param {string} params.password - User password.
-   * @param {number} params.number - Problem number.
+   * @param {number} params.problem - Problem number.
    * @param {string} params.file - Problem file content.
    * @returns {Promise} - Fulfill when question submited. Reject if some error occur.
    */
@@ -41,7 +42,37 @@ export default class URIOnlineJudge {
         .start()
         .catch((error) => {
           browserWrapper.progress.tick(1000);
-          console.log(`\n[*] ${chalk.red('Failed:')} ${error}`);
+          Log.error(error);
+          reject(error);
+        });
+    });
+  }
+
+  /**
+   * Fetch a question description from URI Online Judge Webstie
+   * @param {Object} params - params Object.
+   * @param {number} params.problem - Problem number.
+   * @returns {Promise} - Fulfill when question description fetched.
+   *                      Reject if some error occur.
+   */
+  static fetch({problemNumber}) {
+    const browserWrapper = new BrowserWrapper();
+
+    return new Promise((resolve, reject) => {
+      browserWrapper
+        .init({progress: 'Fetching'})
+        .createPhantom()
+        .createPage()
+        .open({url: URIOnlineJudgeURLS.problemView + problemNumber})
+        .fetchDescription()
+        .then(description => {
+          browserWrapper.progress.tick(1000);
+          resolve(description);
+        })
+        .exit()
+        .start()
+        .catch((error) => {
+          browserWrapper.progress.tick(1000);
           reject(error);
         });
     });
@@ -96,7 +127,7 @@ export default class URIOnlineJudge {
 
     const result = chalk[color](`${answer}: ${problem}`);
 
-    console.log(`[*] ${result}`);
+    Log.success(`Result = ${result}`);
   }
 
 }
