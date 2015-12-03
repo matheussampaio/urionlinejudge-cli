@@ -28,10 +28,10 @@ You can submit a problem solution to the [URI Online Judge](1).
 
 #### Options
 
-| Option                  | Default  | Description        |
-|-------------------------|----------|--------------------|
-| `-n, --number [number]` |          | Problem number.    |
-| `-f, --filepath [path]` |          | Solution filepath. |
+| Option                               | Default  | Description        |
+|--------------------------------------|----------|--------------------|
+| `-n, --number [number]` **required** |          | Problem number.    |
+| `-f, --filepath [path]` **required** |          | Solution filepath. |
 
 #### Example
 
@@ -50,12 +50,12 @@ You have to add `// urionlinejudge::description` to your template.
 
 ##### Options
 
-| Option                  | Default | Description                     |
-|-------------------------|---------|---------------------------------|
-| `-n, --number [number]` |         | Problem number.                 |
-| `-t, --template [path]` |         | Template filepath.              |
-| `-o, --output [path]`   | `.`     | File output path.               |
-| `-f, --force`           |         | Force overwrite existing files. |
+| Option                               | Default | Description                     |
+|--------------------------------------|---------|---------------------------------|
+| `-n, --number [number]` **required** |         | Problem number.                 |
+| `-t, --template [path]` **required** |         | Template filepath.              |
+| `-o, --output [path]`                | `.`     | File output path.               |
+| `-f, --force`                        |         | Force overwrite existing files. |
 
 
 #### Example
