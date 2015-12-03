@@ -49,7 +49,7 @@ let argv = yargs
         alias: 'force',
         demand: false,
         default: false,
-        description: 'Force ovewrite existing files.',
+        description: 'Force overwrite existing files.',
         type: 'boolean',
       })
       .help('help')
