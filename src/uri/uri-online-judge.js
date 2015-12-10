@@ -63,8 +63,6 @@ export default class URIOnlineJudge {
       }
       progress.tick();
 
-      console.log('answer');
-
       URIOnlineJudge.showResult({answer, problem});
 
       // FINISH
