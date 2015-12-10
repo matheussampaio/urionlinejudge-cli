@@ -85,11 +85,5 @@
   },
   "os": [
     "!osx"
-  ],
-  "release": {
-    "branch": "nightmare"
-  },
-  "publishConfig": {
-    "tag": "nightmare"
-  }
+  ]
 }
