@@ -33,7 +33,7 @@ export default class URIOnlineJudge {
         .goto(URIOnlineJudgeURLS.login)
         .url();
 
-      if (url === URIOnlineJudge.login) {
+      if (url === URIOnlineJudgeURLS.login) {
         yield browser
           .type('input[id=UserEmail]', email)
           .type('input[id=UserPassword]', password)
@@ -63,6 +63,8 @@ export default class URIOnlineJudge {
       }
       progress.tick();
 
+      console.log('answer');
+
       URIOnlineJudge.showResult({answer, problem});
 
       // FINISH
@@ -70,7 +72,7 @@ export default class URIOnlineJudge {
         .end();
     })()
     .catch(error => {
-      console.error(error.stack);
+      console.error(error.stack ? error.stack : error);
     });
   }
 

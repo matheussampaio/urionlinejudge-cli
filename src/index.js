@@ -1,5 +1,7 @@
 #! /usr/bin/env node
 
+require('babel-polyfill');
+
 import fs from 'fs';
 import path from 'path';
 import checkUpdate from 'check-update';
