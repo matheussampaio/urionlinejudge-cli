@@ -5,6 +5,9 @@
     "node": true,
     "es6": true
   },
+  "ecmaFeatures": {
+    "generators": true
+  },
   "rules": {
       "no-use-before-define": 0,
       "no-console": 0,

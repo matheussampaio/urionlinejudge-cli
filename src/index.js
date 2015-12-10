@@ -1,14 +1,14 @@
-#! /usr/bin/env node
+require('babel-polyfill');
 
 import fs from 'fs';
 import path from 'path';
 import checkUpdate from 'check-update';
 
-import CLI from './CLI';
-import Log from './Log';
-import loadUser from './loadUser';
-import Analytics from './Analytics';
-import URIOnlineJudge from './URIOnlineJudge';
+import CLI from './cli';
+import Log from './utils/log';
+import loadUser from './load-user';
+import Analytics from './utils/analytics';
+import URIOnlineJudge from './uri/uri-online-judge';
 import { name, version } from '../package.json';
 
 main();
@@ -83,7 +83,9 @@ function submit() {
       return Analytics.error({
         command: 'submit',
         problem: CLI.number,
-        error: error,
+        error: error.stack ? error.stack : error,
+      }).then(() => {
+        throw new Error(error);
       });
     });
 }
@@ -180,9 +182,9 @@ function injectDescription({problem, injectValue, outputFilepath, templateFile})
       ` */`,
     ].join('\n');
 
-    templateFile = templateFile.replace(injectValue, desc);
+    const outputFile = templateFile.replace(injectValue, desc);
 
-    fs.writeFileSync(outputFilepath, templateFile);
+    fs.writeFileSync(outputFilepath, outputFile);
 
     resolve();
   });
@@ -213,6 +215,10 @@ function prepareString(str) {
  */
 function checkForUpdate() {
   return new Promise(resolve => {
+    if (process.env.DEBUG) {
+      return resolve();
+    }
+
     checkUpdate({
       packageName: name,
       packageVersion: version,

@@ -25,9 +25,9 @@ export default class Log {
     });
   }
 
-  static error(message) {
+  static error(error) {
     Log._log({
-      message,
+      message: error.stack ? error.stack : error,
       status: chalk.red('Error:'),
     });
   }

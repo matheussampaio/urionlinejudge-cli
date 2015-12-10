@@ -3,7 +3,7 @@ import _ from 'lodash';
 import path from 'path';
 import read from 'read';
 
-import User from './model/User';
+import User from './model/user';
 
 const CONFIG_FILENAME = '.urionlinejudge.json';
 let user;

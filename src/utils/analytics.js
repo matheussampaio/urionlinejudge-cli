@@ -1,6 +1,6 @@
 import AnalyticsNode from 'analytics-node';
 
-import { version, debug } from '../package.json';
+import { version } from '../../package.json';
 
 class Analytics {
 
@@ -9,7 +9,7 @@ class Analytics {
   }
 
   _track({event, properties}) {
-    if (debug) {
+    if (process.env.DEBUG) {
       console.log('analytics:', event, properties);
     }
 
@@ -47,7 +47,7 @@ class Analytics {
 
   flush() {
     return new Promise(resolve => {
-      if (debug) {
+      if (process.env.DEBUG) {
         resolve();
       } else {
         this.session.flush(() => {

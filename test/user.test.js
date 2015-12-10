@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import User from '../src/model/User';
+import User from '../src/model/user';
 
 describe('User', () => {
   const email = 'test@email.com';
