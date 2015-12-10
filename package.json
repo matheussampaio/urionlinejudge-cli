@@ -31,7 +31,6 @@
   ],
   "dependencies": {
     "analytics-node": "2.0.0",
-    "babel-polyfill": "6.3.14",
     "chalk": "1.1.1",
     "check-update": "0.0.8",
     "co": "4.6.0",

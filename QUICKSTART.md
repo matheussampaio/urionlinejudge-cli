@@ -44,7 +44,7 @@ You can execute your version of the CLI with:
 
 ```
 $ cd path/to/urionlinejudge-cli
-$ node dist/index.js -n 1001 -f ../files/1001.cpp
+$ DEBUG=true node dist/index.js -n 1001 -f ../files/1001.cpp
 ```
 
 or
@@ -55,6 +55,7 @@ $ npm link
 $ cd ../files
 $ urionlinejudge -n 1001 -f 1001.cpp
 ```
+
 
 ## Missing Something?
 Did we missed (or mistyped) something? Open an issue and send us a PR! :smile:
