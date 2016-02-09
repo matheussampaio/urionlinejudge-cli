@@ -35,10 +35,11 @@ export default class URIOnlineJudge {
 
       if (url === URIOnlineJudgeURLS.login) {
         yield browser
-          .type('input[id=UserEmail]', email)
-          .type('input[id=UserPassword]', password)
+          .type('input[id=email]', email)
+          .type('input[id=password]', password)
           .click('input[type=submit]');
       }
+
       progress.tick();
 
       // SUBMIT PROBLEM
