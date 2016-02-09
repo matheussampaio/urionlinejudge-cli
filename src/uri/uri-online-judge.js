@@ -140,7 +140,7 @@ export default class URIOnlineJudge {
     ];
 
     answers.forEach((item) => {
-      if (_.contains(answer.toLowerCase(), item.answer.toLowerCase())) {
+      if (_.includes(answer.toLowerCase(), item.answer.toLowerCase())) {
         color = item.color;
       }
     });
