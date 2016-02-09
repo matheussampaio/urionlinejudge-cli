@@ -22,8 +22,8 @@ export default class URIOnlineJudge {
    * @param {string} params.file - Problem file content.
    * @returns {Promise} - Fulfill when question submited. Reject if some error occur.
    */
-  static submit({email, password, problem, file}) {
-    const browser = new Nightmare({show: process.env.DEBUG});
+  static submit({ email, password, problem, file }) {
+    const browser = new Nightmare({ show: process.env.DEBUG });
     const progress = new Progress('Submitting', 3);
 
     return co.wrap(function* submitGenerator() {
@@ -45,9 +45,7 @@ export default class URIOnlineJudge {
       // SUBMIT PROBLEM
       yield browser
         .goto(URIOnlineJudgeURLS.problemSubmit + problem)
-        .evaluate(f => {
-          return editor.getSession().setValue(f); //eslint-disable-line
-        }, file)
+        .evaluate(f => editor.getSession().setValue(f), file) //eslint-disable-line
         .click('input[type=submit]');
       progress.tick();
 
@@ -64,7 +62,7 @@ export default class URIOnlineJudge {
       }
       progress.tick();
 
-      URIOnlineJudge.showResult({answer, problem});
+      URIOnlineJudge.showResult({ answer, problem });
 
       // FINISH
       return yield browser
@@ -82,8 +80,8 @@ export default class URIOnlineJudge {
    * @returns {Promise} - Fulfill when question description fetched.
    *                      Reject if some error occur.
    */
-  static fetch({problemNumber}) {
-    const browser = new Nightmare({show: process.env.DEBUG});
+  static fetch({ problemNumber }) {
+    const browser = new Nightmare({ show: process.env.DEBUG });
     const progress = new Progress('Fetching', 3);
 
     return co.wrap(function* fetchGenerator() {
@@ -105,7 +103,7 @@ export default class URIOnlineJudge {
    * @param {string} params.answer - Problem answer.
    * @param {number} params.problem - Problem number.
    */
-  static showResult({answer, problem}) {
+  static showResult({ answer, problem }) {
     let color = 'white';
 
     const answers = [

@@ -33,7 +33,7 @@ function _ask(options) {
       if (error) {
         reject(error);
       } else if (_.isEmpty(answer)) {
-        reject({mensage: `Can't use an empty string`});
+        reject({ mensage: `Can't use an empty string` });
       } else {
         resolve(answer);
       }

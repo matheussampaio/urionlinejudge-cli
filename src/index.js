@@ -23,17 +23,15 @@ function main() {
 
 function command() {
   const commands = {
-    reset: reset,
-    submit: submit,
-    fetch: fetch,
+    reset,
+    submit,
+    fetch,
   };
 
   if (commands[CLI.command] !== undefined) {
     commands[CLI.command]()
       // flush every analytics
-      .then(() => {
-        return Analytics.flush();
-      })
+      .then(() => Analytics.flush())
       .catch((error) => {
         Log.error(error);
       })
@@ -65,31 +63,25 @@ function submit() {
 
   return loadUser()
     // submit problem to the uri online judge website
-    .then(user => {
-      return URIOnlineJudge.submit({
-        email: user.email,
-        password: user.password,
-        problem: CLI.number,
-        file: problemFile,
-      });
-    })
+    .then(user => URIOnlineJudge.submit({
+      email: user.email,
+      password: user.password,
+      problem: CLI.number,
+      file: problemFile,
+    }))
     // send success analytics
-    .then((answer) => {
-      return Analytics.submit({
-        problem: CLI.number,
-        result: answer,
-      });
-    })
+    .then((answer) => Analytics.submit({
+      problem: CLI.number,
+      result: answer,
+    }))
     // send error analytics
-    .catch((error) => {
-      return Analytics.error({
-        command: 'submit',
-        problem: CLI.number,
-        error: error.stack ? error.stack : error,
-      }).then(() => {
-        throw new Error(error);
-      });
-    });
+    .catch((error) => Analytics.error({
+      command: 'submit',
+      problem: CLI.number,
+      error: error.stack ? error.stack : error,
+    }).then(() => {
+      throw new Error(error);
+    }));
 }
 
 /**
@@ -112,20 +104,16 @@ function fetch() {
     problemNumber,
     outputFilepath,
   })
-  .then(() => {
-    return URIOnlineJudge.fetch({
-      problemNumber,
-    });
-  })
-  .then(problem => {
-    return injectDescription({
-      problem,
-      injectValue,
-      templateFile,
-      problemNumber,
-      outputFilepath,
-    });
-  })
+  .then(() => URIOnlineJudge.fetch({
+    problemNumber,
+  }))
+  .then(problem => injectDescription({
+    problem,
+    injectValue,
+    templateFile,
+    problemNumber,
+    outputFilepath,
+  }))
   .then(() => {
     Log.success(`Problem fetched: ${outputFilepath}`);
   });
@@ -135,7 +123,14 @@ function fetch() {
  * Check if template already exists and reject if force is false.
  * Check if template contains INJECT_VALUE, reject if don't.
  */
-function checkTemplate({injectValue, templateFile, templateFilepath, outputFilepath, problemNumber, force}) {
+function checkTemplate({
+  injectValue,
+  templateFile,
+  templateFilepath,
+  outputFilepath,
+  problemNumber,
+  force,
+}) {
   return new Promise((resolve, reject) => {
     let exists = true;
 
@@ -151,7 +146,7 @@ function checkTemplate({injectValue, templateFile, templateFilepath, outputFilep
         `Can't find the inject string.`,
         `Make sure that your template contains '${injectValue}'.`,
       ]);
-    // reject if force is false and file already exists
+      // reject if force is false and file already exists
     } else if (!force && exists) {
       reject([
         `This file ${outputFilepath} already exists. Use -f or --force if you want to overwrite:`,
@@ -163,7 +158,12 @@ function checkTemplate({injectValue, templateFile, templateFilepath, outputFilep
   });
 }
 
-function injectDescription({problem, injectValue, outputFilepath, templateFile}) {
+function injectDescription({
+  problem,
+  injectValue,
+  outputFilepath,
+  templateFile,
+}) {
   return new Promise(resolve => {
     const desc = [
       `/*`,
@@ -200,11 +200,11 @@ function prepareString(str) {
 
   for (const w of words) {
     if (newline.length + w.length >= 79) {
-      output += newline.trimRight() + '\n';
+      output += `${newline.trimRight()}\n`;
       newline = start;
     }
 
-    newline += w + ' ';
+    newline += `${w} `;
   }
 
   output += newline.trimRight();
@@ -227,7 +227,7 @@ function checkForUpdate() {
       isCLI: true,
     }, (err, latestVersion, defaultMessage) => {
       if (!err && version !== latestVersion) {
-        console.log(defaultMessage + '\n');
+        console.log(`${defaultMessage}\n`);
       }
       resolve();
     });

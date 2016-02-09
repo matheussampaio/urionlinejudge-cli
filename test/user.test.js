@@ -9,7 +9,7 @@ describe('User', () => {
   let user;
 
   before(() => {
-    user = new User({email, password, username});
+    user = new User({ email, password, username });
   });
 
   it('should create user', () => {

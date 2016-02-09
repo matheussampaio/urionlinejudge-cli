@@ -13,7 +13,7 @@ export default class User {
      * @param {string} options.password - Password of the User.
      * @returns {User} - a new User.
      */
-    constructor({email, password} = {}) {
+    constructor({ email, password } = {}) {
         /**
          * @type {string}
          */

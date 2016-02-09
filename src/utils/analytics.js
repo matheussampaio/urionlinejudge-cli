@@ -8,16 +8,16 @@ class Analytics {
     this.session = new AnalyticsNode('Z3ZdOzxPdnao1KwvKzzXS9QLjag1pjI9');
   }
 
-  _track({event, properties}) {
+  _track({ event, properties }) {
     if (process.env.DEBUG) {
       console.log('analytics:', event, properties);
     }
 
     return new Promise(resolve => {
       this.session.track({
+        properties,
         userId: 'anonymous_user',
         event: `${version}-${event}`,
-        properties: properties,
         integrations: {
           'Google Analytics': false,
         },
@@ -29,12 +29,12 @@ class Analytics {
 
   error(properties = {}) {
     return this._track({
+      properties,
       event: 'error',
-      properties: properties,
     });
   }
 
-  submit({problem, result}) {
+  submit({ problem, result }) {
     return this._track({
       event: 'command',
       properties: {

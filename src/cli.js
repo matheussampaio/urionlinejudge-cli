@@ -57,9 +57,7 @@ let argv = yargs
   })
   .command('reset', 'reset user informations')
   .demand(1)
-  .version(() => {
-    return require('../package.json').version;
-  })
+  .version(() => require('../package.json').version)
   .help('help')
   .argv;
 

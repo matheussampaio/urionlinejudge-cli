@@ -4,7 +4,7 @@ export default class Log {
   constructor() {
   }
 
-  static _log({status, message = []}) {
+  static _log({ status, message = [] }) {
     const pre = '[*]';
 
     console.log(`${pre} ${status}`);
