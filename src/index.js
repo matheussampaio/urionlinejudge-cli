@@ -8,7 +8,7 @@ import checkUpdate from 'check-update';
 
 import CLI from './cli';
 import Log from './utils/log';
-import loadUser from './load-user';
+import Config from './config';
 import Analytics from './utils/analytics';
 import URIOnlineJudge from './uri/uri-online-judge';
 import { name, version } from '../package.json';
@@ -46,9 +46,9 @@ function command() {
  * Reset user informations
  */
 function reset() {
-  return loadUser(true)
-    .then((user) => {
-      Log.success(`Email: ${user.email}`);
+  return Config.load(true)
+    .then((config) => {
+      Log.success(`Email: ${config.email}`, `Template: ${config.template}`);
     })
     .catch((error) => {
       Log.error(error);
@@ -59,9 +59,10 @@ function reset() {
  * Load user and submit a problem to URI Online Judge Website
  */
 function submit() {
-  const problemFile = fs.readFileSync(CLI.filepath, 'utf-8');
+  const filename = CLI.filepath ? CLI.filepath : `${CLI.number}.cpp`;
+  const problemFile = fs.readFileSync(filename, 'utf-8');
 
-  return loadUser()
+  return Config.load()
     // submit problem to the uri online judge website
     .then(user => URIOnlineJudge.submit({
       email: user.email,
@@ -92,31 +93,35 @@ function fetch() {
   const problemNumber = CLI.number;
   const injectValue = `// urionlinejudge::description`;
 
-  const extname = path.extname(CLI.template);
-  const outputFilepath = path.join(CLI.output, `${problemNumber}${extname}`);
+  return Config.load()
+    .then(config => {
+      const template = CLI.template ? CLI.template : config.template;
 
-  const templateFile = fs.readFileSync(CLI.template, 'utf-8');
+      const extname = path.extname(template);
+      const outputFilepath = path.join(CLI.output, `${problemNumber}${extname}`);
 
-  return checkTemplate({
-    force,
-    injectValue,
-    templateFile,
-    problemNumber,
-    outputFilepath,
-  })
-  .then(() => URIOnlineJudge.fetch({
-    problemNumber,
-  }))
-  .then(problem => injectDescription({
-    problem,
-    injectValue,
-    templateFile,
-    problemNumber,
-    outputFilepath,
-  }))
-  .then(() => {
-    Log.success(`Problem fetched: ${outputFilepath}`);
-  });
+      const templateFile = fs.readFileSync(template, 'utf-8');
+      return checkTemplate({
+        force,
+        injectValue,
+        templateFile,
+        problemNumber,
+        outputFilepath,
+      })
+      .then(() => URIOnlineJudge.fetch({
+        problemNumber,
+      }))
+      .then(problem => injectDescription({
+        problem,
+        injectValue,
+        templateFile,
+        problemNumber,
+        outputFilepath,
+      }))
+      .then(() => {
+        Log.success(`Problem fetched: ${outputFilepath}`);
+      });
+    });
 }
 
 /**

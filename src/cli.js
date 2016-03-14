@@ -6,7 +6,7 @@ let argv = yargs
     argv = args
       .option('f', {
         alias: 'filepath',
-        demand: true,
+        demand: false,
         description: 'Filepath of the code',
         requiresArg: true,
         type: 'string',
@@ -32,7 +32,7 @@ let argv = yargs
       })
       .option('t', {
         alias: 'template',
-        demand: true,
+        demand: false,
         description: 'Filepath of the template',
         requiresArg: true,
         type: 'string',

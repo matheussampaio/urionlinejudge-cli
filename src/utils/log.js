@@ -18,24 +18,24 @@ export default class Log {
     }
   }
 
-  static success(message) {
+  static success(...message) {
     Log._log({
       message,
-      status: chalk.green('Success:'),
+      status: chalk.green('Success:')
     });
   }
 
   static error(error) {
     Log._log({
       message: error.stack ? error.stack : error,
-      status: chalk.red('Error:'),
+      status: chalk.red('Error:')
     });
   }
 
-  static warning(message) {
+  static warning(...message) {
     Log._log({
       message,
-      status: chalk.yellow('Warning:'),
+      status: chalk.yellow('Warning:')
     });
   }
 }

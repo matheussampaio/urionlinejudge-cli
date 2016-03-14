@@ -27,14 +27,17 @@ You can submit a problem solution to the [URI Online Judge](1).
 
 #### Options
 
-| Option                               | Default  | Description        |
-|--------------------------------------|----------|--------------------|
-| `-n, --number [number]` **required** |          | Problem number.    |
-| `-f, --filepath [path]` **required** |          | Solution filepath. |
+| Option                               | Default             | Description        |
+|--------------------------------------|---------------------|--------------------|
+| `-n, --number [number]` **required** |                     | Problem number.    |
+| `-f, --filepath [path]`              | Number plus `.cpp`. | Solution filepath. |
 
 #### Example
 
 ```bash
+# submit ./1001.cpp
+$ urionlinejudge submit -n 1001
+# or
 $ urionlinejudge submit -n 1001 -f 1001.cpp
 # or
 $ urionlinejudge submit --number 1001 --filepath 1001.cpp
@@ -49,12 +52,12 @@ You have to add `// urionlinejudge::description` to your template.
 
 ##### Options
 
-| Option                               | Default | Description                     |
-|--------------------------------------|---------|---------------------------------|
-| `-n, --number [number]` **required** |         | Problem number.                 |
-| `-t, --template [path]` **required** |         | Template filepath.              |
-| `-o, --output [path]`                | `.`     | File output path.               |
-| `-f, --force`                        |         | Force overwrite existing files. |
+| Option                               | Default                     | Description                     |
+|--------------------------------------|-----------------------------|---------------------------------|
+| `-n, --number [number]` **required** |                             | Problem number.                 |
+| `-t, --template [path]`              | Use `config.template` value | Template filepath.              |
+| `-o, --output [path]`                | `.`                         | File output path.               |
+| `-f, --force`                        |                             | Force overwrite existing files. |
 
 
 #### Example
@@ -78,10 +81,13 @@ int main()
 Then you execute the `fetch` command passing your template path:
 
 ```bash
+# get template path from configs
+$ urionlinejudge fetch -n 1001
+# overwrite the template path
 $ urionlinejudge fetch -n 1001 -t ../templates/template.cpp
-# or
+# overwrite existing files
 $ urionlinejudge fetch -n 1001 -t ../templates/template.cpp -f
-# or
+# save file at ../solutions/folder
 $ urionlinejudge fetch -n 1001 -t ../templates/template.cpp -o ../solutions/folder
 ```
 
@@ -128,11 +134,13 @@ You can reset your information.
 
 ```
 $ urionlinejudge reset
+What is the full path for the template? ../uri/template.cpp
 What is your email? matheus1401@gmail.com
 What is your password? *******
 
 [*] Success:
 [*] Email: matheus1401@gmail.com
+[*] Template: /Users/user/git/uri/template.cpp
 ```
 
 
