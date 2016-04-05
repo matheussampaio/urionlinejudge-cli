@@ -69,7 +69,8 @@ function submit() {
         email: config.email,
         password: config.password,
         problem: CLI.number,
-        file: problemFile
+        file: problemFile,
+        code: 5 // python3
       });
     })
     // send success analytics

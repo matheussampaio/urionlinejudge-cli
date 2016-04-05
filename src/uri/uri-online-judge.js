@@ -22,7 +22,7 @@ export default class URIOnlineJudge {
    * @param {string} params.file - Problem file content.
    * @returns {Promise} - Fulfill when question submited. Reject if some error occur.
    */
-  static submit({ email, password, problem, file }) {
+  static submit({ email, password, problem, file, code }) {
     const browser = new Nightmare({ show: process.env.DEBUG });
     const progress = new Progress('Submitting', 3);
 
@@ -45,8 +45,12 @@ export default class URIOnlineJudge {
       // SUBMIT PROBLEM
       yield browser
         .goto(URIOnlineJudgeURLS.problemSubmit + problem)
-        .evaluate(f => editor.getSession().setValue(f), file) //eslint-disable-line
+        .evaluate(options => {
+          document.getElementById('language-id').selectedIndex = options.code;
+          editor.getSession().setValue(options.file); //eslint-disable-line
+        }, { file, code })
         .click('input[type=submit]');
+
       progress.tick();
 
       // WAIT PROBLEM ANSWER
