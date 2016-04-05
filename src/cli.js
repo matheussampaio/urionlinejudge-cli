@@ -1,41 +1,38 @@
 import yargs from 'yargs';
 
-let argv = yargs
+const argv = yargs
   .usage('$0 <command> <params> [options]')
-  .command('submit', 'submit problem to urionlinejudge', (args) => {
-    argv = args
-      .option('f', {
-        alias: 'filepath',
-        demand: false,
-        description: 'Filepath of the code',
-        requiresArg: true,
-        type: 'string',
-      })
-      .option('n', {
-        alias: 'number',
-        demand: true,
-        description: 'Number of the problem',
-        requiresArg: true,
-        type: 'number',
-      })
-      .help('help')
-      .argv;
+  .command('submit', 'submit problem to urionlinejudge', {
+    f: {
+      alias: 'filepath',
+      demand: false,
+      description: 'Filepath of the code',
+      requiresArg: true,
+      type: 'string'
+    },
+    n: {
+      alias: 'number',
+      demand: true,
+      description: 'Number of the problem',
+      requiresArg: true,
+      type: 'number'
+    }
   })
   .command('fetch', 'Fetch a problem description', (args) => {
-    argv = args
+    return args
       .option('n', {
         alias: 'number',
         demand: true,
         description: 'Number of the problem',
         requiresArg: true,
-        type: 'number',
+        type: 'number'
       })
       .option('t', {
         alias: 'template',
         demand: false,
         description: 'Filepath of the template',
         requiresArg: true,
-        type: 'string',
+        type: 'string'
       })
       .option('o', {
         alias: 'output',
@@ -43,14 +40,14 @@ let argv = yargs
         default: '.',
         description: 'Path to save the file',
         requiresArg: true,
-        type: 'string',
+        type: 'string'
       })
       .option('f', {
         alias: 'force',
         demand: false,
         default: false,
         description: 'Force overwrite existing files.',
-        type: 'boolean',
+        type: 'boolean'
       })
       .help('help')
       .argv;

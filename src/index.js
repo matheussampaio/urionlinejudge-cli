@@ -25,7 +25,7 @@ function command() {
   const commands = {
     reset,
     submit,
-    fetch,
+    fetch
   };
 
   if (commands[CLI.command] !== undefined) {
@@ -59,27 +59,29 @@ function reset() {
  * Load user and submit a problem to URI Online Judge Website
  */
 function submit() {
-  const filename = CLI.filepath ? CLI.filepath : `${CLI.number}.cpp`;
-  const problemFile = fs.readFileSync(filename, 'utf-8');
-
   return Config.load()
     // submit problem to the uri online judge website
-    .then(user => URIOnlineJudge.submit({
-      email: user.email,
-      password: user.password,
-      problem: CLI.number,
-      file: problemFile,
-    }))
+    .then(config => {
+      const filename = CLI.filepath ? CLI.filepath : `${CLI.number}.${config.extension}`;
+      const problemFile = fs.readFileSync(filename, 'utf-8');
+
+      return URIOnlineJudge.submit({
+        email: config.email,
+        password: config.password,
+        problem: CLI.number,
+        file: problemFile
+      });
+    })
     // send success analytics
     .then((answer) => Analytics.submit({
       problem: CLI.number,
-      result: answer,
+      result: answer
     }))
     // send error analytics
     .catch((error) => Analytics.error({
       command: 'submit',
       problem: CLI.number,
-      error: error.stack ? error.stack : error,
+      error: error.stack ? error.stack : error
     }).then(() => {
       throw new Error(error);
     }));
@@ -106,17 +108,17 @@ function fetch() {
         injectValue,
         templateFile,
         problemNumber,
-        outputFilepath,
+        outputFilepath
       })
       .then(() => URIOnlineJudge.fetch({
-        problemNumber,
+        problemNumber
       }))
       .then(problem => injectDescription({
         problem,
         injectValue,
         templateFile,
         problemNumber,
-        outputFilepath,
+        outputFilepath
       }))
       .then(() => {
         Log.success(`Problem fetched: ${outputFilepath}`);
@@ -134,7 +136,7 @@ function checkTemplate({
   templateFilepath,
   outputFilepath,
   problemNumber,
-  force,
+  force
 }) {
   return new Promise((resolve, reject) => {
     let exists = true;
@@ -149,13 +151,13 @@ function checkTemplate({
     if (templateFile.indexOf(injectValue) === -1) {
       reject([
         `Can't find the inject string.`,
-        `Make sure that your template contains '${injectValue}'.`,
+        `Make sure that your template contains '${injectValue}'.`
       ]);
       // reject if force is false and file already exists
     } else if (!force && exists) {
       reject([
         `This file ${outputFilepath} already exists. Use -f or --force if you want to overwrite:`,
-        `urionlinejudge fetch -f -n ${problemNumber} -t ${templateFilepath} -o ${outputFilepath}`,
+        `urionlinejudge fetch -f -n ${problemNumber} -t ${templateFilepath} -o ${outputFilepath}`
       ]);
     } else {
       resolve();
@@ -167,7 +169,7 @@ function injectDescription({
   problem,
   injectValue,
   outputFilepath,
-  templateFile,
+  templateFile
 }) {
   return new Promise(resolve => {
     const desc = [
@@ -186,7 +188,7 @@ function injectDescription({
       ` * Output:`,
       `${prepareString(problem.output)}`,
       ` *`,
-      ` */`,
+      ` */`
     ].join('\n');
 
     const outputFile = templateFile.replace(injectValue, desc);
@@ -229,7 +231,7 @@ function checkForUpdate() {
     checkUpdate({
       packageName: name,
       packageVersion: version,
-      isCLI: true,
+      isCLI: true
     }, (err, latestVersion, defaultMessage) => {
       if (!err && version !== latestVersion) {
         console.log(`${defaultMessage}\n`);

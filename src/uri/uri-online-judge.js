@@ -50,16 +50,22 @@ export default class URIOnlineJudge {
       progress.tick();
 
       // WAIT PROBLEM ANSWER
+      let countTryies = 30;
       let answer = '- In queue -';
 
-      while (answer === '- In queue -') {
+      while (answer === '- In queue -' && countTryies-- > 0) {
         answer = yield browser
           .wait(1000)
           .goto(URIOnlineJudgeURLS.problemSubmissions)
           .evaluate(URIOnlineJudge._getAnswer, {
-            number: problem,
+            number: problem
           });
       }
+
+      if (countTryies <= 0) {
+        answer = 'Timeout';
+      }
+
       progress.tick();
 
       URIOnlineJudge.showResult({ answer, problem });
@@ -109,32 +115,36 @@ export default class URIOnlineJudge {
     const answers = [
       {
         answer: 'accepted',
-        color: 'green',
+        color: 'green'
       },
       {
         answer: 'wrong',
-        color: 'red',
+        color: 'red'
       },
       {
         answer: 'find the answer',
-        color: 'red',
+        color: 'red'
       },
       {
-        answer: 'compilation',
-        color: 'yellow',
+        answer: 'compilation error',
+        color: 'yellow'
       },
       {
         answer: 'time limit exceeded',
-        color: 'blue',
+        color: 'blue'
       },
       {
         answer: 'runtime error',
-        color: 'cyan',
+        color: 'cyan'
       },
       {
         answer: 'presentation error',
-        color: 'gray',
+        color: 'gray'
       },
+      {
+        answer: 'Timout',
+        color: 'red'
+      }
     ];
 
     answers.forEach((item) => {

@@ -69,6 +69,16 @@ function _askForTemplate() {
   });
 }
 
+function _askForDefaultExtension() {
+  return _ask({
+    prompt: 'What is the default extension? (cpp/py)'
+  })
+  .then(answer => {
+    config.extension = answer || 'cpp';
+  });
+}
+
+
 function _save() {
   return new Promise(resolve => {
     const file = JSON.stringify(config, null, '  ');
@@ -87,6 +97,12 @@ export default class Config {
     let save = false;
 
     return _load(reset)
+      .then(() => {
+        if (_.isEmpty(config.extension)) {
+          save = true;
+          return _askForDefaultExtension();
+        }
+      })
       .then(() => {
         if (_.isEmpty(config.template)) {
           save = true;
