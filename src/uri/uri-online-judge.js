@@ -97,30 +97,6 @@ export default class URIOnlineJudge {
   }
 
   /**
-   * Fetch a question description from URI Online Judge Webstie
-   * @param {Object} params - params Object.
-   * @param {number} params.problem - Problem number.
-   * @returns {Promise} - Fulfill when question description fetched.
-   *                      Reject if some error occur.
-   */
-  static fetch({ problemNumber }) {
-    const browser = new Nightmare({ show: process.env.DEBUG });
-    const progress = new Progress(3);
-
-    return co.wrap(function* fetchGenerator() {
-      progress.tick(0, `loading page...`);
-      yield browser.goto(URIOnlineJudgeURLS.problemView + problemNumber);
-      progress.tick(1, `getting description...`);
-      const description = yield browser.evaluate(URIOnlineJudge._getDescription);
-      progress.tick(1, `saving file...`);
-      yield browser.end();
-      progress.tick();
-
-      return yield Promise.resolve(description);
-    })();
-  }
-
-  /**
    * Print result on the command line with colors.
    *
    * @param {Object} params - params object.
@@ -199,17 +175,4 @@ export default class URIOnlineJudge {
     return answerTmp;
   }
 
-  static _getDescription() {
-    const iframe = $(`#description-html`).contents(); //eslint-disable-line
-
-    const problem = {
-      title: iframe.find(`.header>h1`)[0].textContent.trim(),
-      timelimit: iframe.find(`.header>strong`)[0].textContent.trim(),
-      description: iframe.find(`.problem .description`)[0].textContent.trim(),
-      input: iframe.find(`.problem .input`)[0].textContent.trim(),
-      output: iframe.find(`.problem .output`)[0].textContent.trim()
-    };
-
-    return problem;
-  }
 }

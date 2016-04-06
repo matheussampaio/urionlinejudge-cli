@@ -11,14 +11,7 @@ const argv = yargs
       type: `string`
     }
   })
-  .command(`fetch`, `Fetch a problem description`, {
-    n: {
-      alias: `number`,
-      demand: true,
-      description: `Number of the problem`,
-      requiresArg: true,
-      type: `number`
-    },
+  .command(`init <number> [force]`, `Fetch a problem description`, {
     t: {
       alias: `template`,
       demand: false,
@@ -33,13 +26,6 @@ const argv = yargs
       description: `Path to save the file`,
       requiresArg: true,
       type: `string`
-    },
-    f: {
-      alias: `force`,
-      demand: false,
-      default: false,
-      description: `Force overwrite existing files.`,
-      type: `boolean`
     }
   })
   .command(`reset`, `reset user informations`)

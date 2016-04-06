@@ -11,6 +11,7 @@ import Log from './utils/log';
 import Config from './config';
 import Analytics from './utils/analytics';
 import URIOnlineJudge from './uri/uri-online-judge';
+import URIOnlineJudgeURL from './uri/uri-online-judge-urls';
 import { name, version } from '../package.json';
 
 main();
@@ -25,7 +26,7 @@ function command() {
   const commands = {
     reset,
     submit,
-    fetch
+    init
   };
 
   if (commands[CLI.command] !== undefined) {
@@ -88,9 +89,9 @@ function submit() {
 }
 
 /**
- * Fetch a question from the URI Online Judge Website
+ * Init a question from the URI Online Judge Website
  */
-function fetch() {
+function init() {
   const force = CLI.force;
   const problemNumber = CLI.number;
   const injectValue = `urionlinejudge::description`;
@@ -101,8 +102,8 @@ function fetch() {
 
       const extname = path.extname(template);
       const outputFilepath = path.join(CLI.output, `${problemNumber}${extname}`);
-
       const templateFile = fs.readFileSync(template, `utf-8`);
+
       return checkTemplate({
         force,
         injectValue,
@@ -110,18 +111,13 @@ function fetch() {
         problemNumber,
         outputFilepath
       })
-      .then(() => URIOnlineJudge.fetch({
-        problemNumber
-      }))
-      .then(problem => injectDescription({
-        problem,
-        injectValue,
-        templateFile,
-        problemNumber,
-        outputFilepath
-      }))
       .then(() => {
-        Log.success(`Problem fetched: ${outputFilepath}`);
+        const desc = URIOnlineJudgeURL.problemView + problemNumber;
+        const outputFile = templateFile.replace(injectValue, desc);
+
+        fs.writeFileSync(outputFilepath, outputFile);
+
+        Log.success(`Problem init: ${outputFilepath}`);
       });
     });
 }
@@ -163,58 +159,6 @@ function checkTemplate({
       resolve();
     }
   });
-}
-
-function injectDescription({
-  problem,
-  injectValue,
-  outputFilepath,
-  templateFile
-}) {
-  return new Promise(resolve => {
-    const desc = [
-      `Title:`,
-      `${prepareString(problem.title)}`,
-      ``,
-      `${prepareString(problem.timelimit)}`,
-      ``,
-      `Description:`,
-      `${prepareString(problem.description)}`,
-      ``,
-      `Input:`,
-      `${prepareString(problem.input)}`,
-      ``,
-      `Output:`,
-      `${prepareString(problem.output)}`,
-      ``
-    ].join(`\n`);
-
-    const outputFile = templateFile.replace(injectValue, desc);
-
-    fs.writeFileSync(outputFilepath, outputFile);
-
-    resolve();
-  });
-}
-
-function prepareString(str) {
-  const words = str.split(` `);
-  const start = ``;
-  let output = ``;
-  let newline = start;
-
-  for (const w of words) {
-    if (newline.length + w.length >= 79) {
-      output += `${newline.trimRight()}\n`;
-      newline = start;
-    }
-
-    newline += `${w} `;
-  }
-
-  output += newline.trimRight();
-
-  return output;
 }
 
 /**
