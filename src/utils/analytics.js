@@ -5,22 +5,22 @@ import { version } from '../../package.json';
 class Analytics {
 
   constructor() {
-    this.session = new AnalyticsNode('Z3ZdOzxPdnao1KwvKzzXS9QLjag1pjI9');
+    this.session = new AnalyticsNode(`Z3ZdOzxPdnao1KwvKzzXS9QLjag1pjI9`);
   }
 
   _track({ event, properties }) {
     if (process.env.DEBUG) {
-      console.log('analytics:', event, properties);
+      console.log(`analytics:`, event, properties);
     }
 
     return new Promise(resolve => {
       this.session.track({
         properties,
-        userId: 'anonymous_user',
+        userId: `anonymous_user`,
         event: `${version}-${event}`,
         integrations: {
-          'Google Analytics': false,
-        },
+          'Google Analytics': false
+        }
       });
 
       resolve();
@@ -30,18 +30,18 @@ class Analytics {
   error(properties = {}) {
     return this._track({
       properties,
-      event: 'error',
+      event: `error`
     });
   }
 
   submit({ problem, result }) {
     return this._track({
-      event: 'command',
+      event: `command`,
       properties: {
-        command: 'submit',
+        command: `submit`,
         problem,
-        result,
-      },
+        result
+      }
     });
   }
 

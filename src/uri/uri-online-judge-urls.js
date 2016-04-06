@@ -4,7 +4,7 @@
  * @type {Object}
  */
 
-const base = 'https://www.urionlinejudge.com.br';
+const base = `https://www.urionlinejudge.com.br`;
 
 const URLS = {
   base,

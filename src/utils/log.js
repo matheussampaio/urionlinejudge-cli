@@ -1,11 +1,8 @@
 import chalk from 'chalk';
 
 export default class Log {
-  constructor() {
-  }
-
   static _log({ status, message = [] }) {
-    const pre = '[*]';
+    const pre = `[*]`;
 
     console.log(`${pre} ${status}`);
 
@@ -28,21 +25,21 @@ export default class Log {
   static success(...message) {
     Log._log({
       message,
-      status: chalk.green('Success:')
+      status: chalk.green(`Success:`)
     });
   }
 
   static error(error) {
     Log._log({
       message: error.stack ? error.stack : error,
-      status: chalk.red('Error:')
+      status: chalk.red(`Error:`)
     });
   }
 
   static warning(...message) {
     Log._log({
       message,
-      status: chalk.yellow('Warning:')
+      status: chalk.yellow(`Warning:`)
     });
   }
 }

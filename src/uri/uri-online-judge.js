@@ -8,10 +8,6 @@ import Progress from '../utils/progress';
 import URIOnlineJudgeURLS from './uri-online-judge-urls.js';
 
 export default class URIOnlineJudge {
-
-  constructor() {
-  }
-
   /**
    * Submit a problem to the URIOnlineJudge website.
    *
@@ -27,7 +23,7 @@ export default class URIOnlineJudge {
     const progress = new Progress(3);
 
     return co.wrap(function* submitGenerator() {
-      progress.tick(0, 'log in...');
+      progress.tick(0, `log in...`);
 
       // LOGIN
       // TODO: check if login is success
@@ -37,12 +33,12 @@ export default class URIOnlineJudge {
 
       if (url === URIOnlineJudgeURLS.login) {
         yield browser
-          .type('input[id=email]', email)
-          .type('input[id=password]', password)
-          .click('input[type=submit]');
+          .type(`input[id=email]`, email)
+          .type(`input[id=password]`, password)
+          .click(`input[type=submit]`);
       }
 
-      progress.tick(1, 'submiting code...');
+      progress.tick(1, `submiting code...`);
 
       const code = {
         c: 1,
@@ -58,18 +54,18 @@ export default class URIOnlineJudge {
       yield browser
         .goto(URIOnlineJudgeURLS.problemSubmit + problem)
         .evaluate(options => {
-          document.getElementById('language-id').selectedIndex = options.code;
+          document.getElementById(`language-id`).selectedIndex = options.code;
           editor.getSession().setValue(options.file); //eslint-disable-line
         }, { file, code: code[language] })
-        .click('input[type=submit]');
+        .click(`input[type=submit]`);
 
-      progress.tick(1, 'waiting for answer');
+      progress.tick(1, `waiting for answer`);
 
       // WAIT PROBLEM ANSWER
       let countTryies = 120;
-      let answer = '- In queue -';
+      let answer = `- In queue -`;
 
-      while (answer === '- In queue -' && countTryies-- > 0) {
+      while (answer === `- In queue -` && countTryies-- > 0) {
         answer = yield browser
           .wait(1000)
           .goto(URIOnlineJudgeURLS.problemSubmissions)
@@ -81,7 +77,7 @@ export default class URIOnlineJudge {
       }
 
       if (countTryies <= 0) {
-        answer = 'Timeout';
+        answer = `Timeout`;
       }
 
       progress.tick();
@@ -109,11 +105,11 @@ export default class URIOnlineJudge {
     const progress = new Progress(3);
 
     return co.wrap(function* fetchGenerator() {
-      progress.tick(0, 'loading page...');
+      progress.tick(0, `loading page...`);
       yield browser.goto(URIOnlineJudgeURLS.problemView + problemNumber);
-      progress.tick(1, 'getting description...');
+      progress.tick(1, `getting description...`);
       const description = yield browser.evaluate(URIOnlineJudge._getDescription);
-      progress.tick(1, 'saving file...');
+      progress.tick(1, `saving file...`);
       yield browser.end();
       progress.tick();
 
@@ -129,40 +125,40 @@ export default class URIOnlineJudge {
    * @param {number} params.problem - Problem number.
    */
   static showResult({ answer, problem }) {
-    let color = 'white';
+    let color = `white`;
 
     const answers = [
       {
-        answer: 'accepted',
-        color: 'green'
+        answer: `accepted`,
+        color: `green`
       },
       {
-        answer: 'wrong',
-        color: 'red'
+        answer: `wrong`,
+        color: `red`
       },
       {
-        answer: 'find the answer',
-        color: 'red'
+        answer: `find the answer`,
+        color: `red`
       },
       {
-        answer: 'compilation error',
-        color: 'yellow'
+        answer: `compilation error`,
+        color: `yellow`
       },
       {
-        answer: 'time limit exceeded',
-        color: 'blue'
+        answer: `time limit exceeded`,
+        color: `blue`
       },
       {
-        answer: 'runtime error',
-        color: 'cyan'
+        answer: `runtime error`,
+        color: `cyan`
       },
       {
-        answer: 'presentation error',
-        color: 'gray'
+        answer: `presentation error`,
+        color: `gray`
       },
       {
-        answer: 'timeout',
-        color: 'red'
+        answer: `timeout`,
+        color: `red`
       }
     ];
 
@@ -178,17 +174,17 @@ export default class URIOnlineJudge {
   }
 
   static _getAnswer(options) {
-    const table = document.getElementById('element').children[0];
+    const table = document.getElementById(`element`).children[0];
     const tbody = table.children[1];
-    let answerTmp = '- In queue -';
+    let answerTmp = `- In queue -`;
 
     for (let i = 0; i < tbody.children.length; i++) {
       const tr = tbody.children[i];
 
-      const tiny = tr.getElementsByClassName('tiny')[0].innerText;
+      const tiny = tr.getElementsByClassName(`tiny`)[0].innerText;
 
       if (options.number === parseInt(tiny, 10)) {
-        answerTmp = tr.getElementsByClassName('answer')[0].innerText;
+        answerTmp = tr.getElementsByClassName(`answer`)[0].innerText;
         break;
       }
     }
@@ -197,14 +193,14 @@ export default class URIOnlineJudge {
   }
 
   static _getDescription() {
-    const iframe = $('#description-html').contents(); //eslint-disable-line
+    const iframe = $(`#description-html`).contents(); //eslint-disable-line
 
     const problem = {
-      title: iframe.find('.header>h1')[0].textContent.trim(),
-      timelimit: iframe.find('.header>strong')[0].textContent.trim(),
-      description: iframe.find('.problem .description')[0].textContent.trim(),
-      input: iframe.find('.problem .input')[0].textContent.trim(),
-      output: iframe.find('.problem .output')[0].textContent.trim(),
+      title: iframe.find(`.header>h1`)[0].textContent.trim(),
+      timelimit: iframe.find(`.header>strong`)[0].textContent.trim(),
+      description: iframe.find(`.problem .description`)[0].textContent.trim(),
+      input: iframe.find(`.problem .input`)[0].textContent.trim(),
+      output: iframe.find(`.problem .output`)[0].textContent.trim()
     };
 
     return problem;

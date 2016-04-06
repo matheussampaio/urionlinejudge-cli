@@ -3,7 +3,7 @@ import _ from 'lodash';
 import path from 'path';
 import read from 'read';
 
-const CONFIG_FILENAME = '.urionlinejudge.json';
+const CONFIG_FILENAME = `.urionlinejudge.json`;
 
 let config;
 
@@ -42,7 +42,7 @@ function _ask(options) {
 
 function _askForEmail() {
   return _ask({
-    prompt: 'What is your email?'
+    prompt: `What is your email?`
   })
   .then(answer => {
     config.email = answer;
@@ -51,9 +51,9 @@ function _askForEmail() {
 
 function _askForPassword() {
   return _ask({
-    prompt: 'What is your password?',
+    prompt: `What is your password?`,
     silent: true,
-    replace: '*'
+    replace: `*`
   })
   .then(answer => {
     config.password = answer;
@@ -62,7 +62,7 @@ function _askForPassword() {
 
 function _askForTemplate() {
   return _ask({
-    prompt: 'What is the full path for the template?'
+    prompt: `What is the full path for the template?`
   })
   .then(answer => {
     config.template = path.resolve(answer);
@@ -71,17 +71,17 @@ function _askForTemplate() {
 
 function _askForDefaultExtension() {
   return _ask({
-    prompt: 'What is the default extension? (cpp/py)'
+    prompt: `What is the default extension? (cpp/py)`
   })
   .then(answer => {
-    config.extension = answer || 'cpp';
+    config.extension = answer || `cpp`;
   });
 }
 
 
 function _save() {
   return new Promise(resolve => {
-    const file = JSON.stringify(config, null, '  ');
+    const file = JSON.stringify(config, null, `  `);
 
     fs.writeFile(_getConfigPath(), file, () => {
       resolve(config);
@@ -90,9 +90,6 @@ function _save() {
 }
 
 export default class Config {
-  constructor() {
-  }
-
   static load(reset) {
     let save = false;
 

@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-require('babel-polyfill');
+require(`babel-polyfill`);
 
 import fs from 'fs';
 import path from 'path';
@@ -62,7 +62,7 @@ function submit() {
   return Config.load()
     // submit problem to the uri online judge website
     .then(config => {
-      const problemFile = fs.readFileSync(CLI.filepath, 'utf-8');
+      const problemFile = fs.readFileSync(CLI.filepath, `utf-8`);
       const ext = path.extname(CLI.filepath);
       const number = CLI.number ? CLI.number : path.basename(CLI.filepath, ext);
 
@@ -81,7 +81,7 @@ function submit() {
     }))
     // send error analytics
     .catch((error) => Analytics.error({
-      command: 'submit',
+      command: `submit`,
       problem: CLI.number,
       error: error.stack ? error.stack : error
     }).then(() => {
@@ -95,7 +95,7 @@ function submit() {
 function fetch() {
   const force = CLI.force;
   const problemNumber = CLI.number;
-  const injectValue = 'urionlinejudge::description';
+  const injectValue = `urionlinejudge::description`;
 
   return Config.load()
     .then(config => {
@@ -104,7 +104,7 @@ function fetch() {
       const extname = path.extname(template);
       const outputFilepath = path.join(CLI.output, `${problemNumber}${extname}`);
 
-      const templateFile = fs.readFileSync(template, 'utf-8');
+      const templateFile = fs.readFileSync(template, `utf-8`);
       return checkTemplate({
         force,
         injectValue,
@@ -175,21 +175,21 @@ function injectDescription({
 }) {
   return new Promise(resolve => {
     const desc = [
-      'Title:',
+      `Title:`,
       `${prepareString(problem.title)}`,
-      '',
+      ``,
       `${prepareString(problem.timelimit)}`,
-      '',
-      'Description:',
+      ``,
+      `Description:`,
       `${prepareString(problem.description)}`,
-      '',
-      'Input:',
+      ``,
+      `Input:`,
       `${prepareString(problem.input)}`,
-      '',
-      'Output:',
+      ``,
+      `Output:`,
       `${prepareString(problem.output)}`,
-      ''
-    ].join('\n');
+      ``
+    ].join(`\n`);
 
     const outputFile = templateFile.replace(injectValue, desc);
 
@@ -200,7 +200,7 @@ function injectDescription({
 }
 
 function prepareString(str) {
-  const words = str.split(' ');
+  const words = str.split(` `);
   const start = ``;
   let output = ``;
   let newline = start;
