@@ -59,30 +59,28 @@ function reset() {
  * Load user and submit a problem to URI Online Judge Website
  */
 function submit() {
+  const problemFile = fs.readFileSync(CLI.filepath, `utf-8`);
+  const ext = path.extname(CLI.filepath);
+  const number = CLI.number ? CLI.number : path.basename(CLI.filepath, ext);
+
   return Config.load()
     // submit problem to the uri online judge website
-    .then(config => {
-      const problemFile = fs.readFileSync(CLI.filepath, `utf-8`);
-      const ext = path.extname(CLI.filepath);
-      const number = CLI.number ? CLI.number : path.basename(CLI.filepath, ext);
-
-      return URIOnlineJudge.submit({
-        email: config.email,
-        password: config.password,
-        problem: parseInt(number, 10),
-        file: problemFile,
-        language: CLI.language
-      });
-    })
+    .then(config => URIOnlineJudge.submit({
+      email: config.email,
+      password: config.password,
+      problem: parseInt(number, 10),
+      file: problemFile,
+      language: CLI.language
+    }))
     // send success analytics
     .then((answer) => Analytics.submit({
-      problem: CLI.number,
+      problem: number,
       result: answer
     }))
     // send error analytics
     .catch((error) => Analytics.error({
       command: `submit`,
-      problem: CLI.number,
+      problem: number,
       error: error.stack ? error.stack : error
     }).then(() => {
       throw new Error(error);

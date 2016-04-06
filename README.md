@@ -22,25 +22,23 @@ $ npm install -g urionlinejudge-cli
 
 # Commands
 
-## `submit`
+## `submit <filepath> [number]`
 You can submit a problem solution to the [URI Online Judge](1).
 
 #### Options
 
 | Option                               | Default             | Description        |
 |--------------------------------------|---------------------|--------------------|
-| `-n, --number [number]` **required** |                     | Problem number.    |
-| `-f, --filepath [path]`              | Number plus `.cpp`. | Solution filepath. |
+| `--language [language]`              | `python` | Language used for submitting. Pick one: [`c`, `c++`, `c#`, `java`, `python`, `python3`, `ruby`]. |
 
 #### Example
 
 ```bash
-# submit ./1001.cpp
-$ urionlinejudge submit -n 1001
+$ urionlinejudge submit ./1001.py
 # or
-$ urionlinejudge submit -n 1001 -f 1001.cpp
+$ urionlinejudge submit ./file.py 1001
 # or
-$ urionlinejudge submit --number 1001 --filepath 1001.cpp
+$ urionlinejudge submit ./file.cpp 1001 --language c++
 ```
 
 
@@ -48,7 +46,7 @@ $ urionlinejudge submit --number 1001 --filepath 1001.cpp
 ## `fetch`
 You can fetch a problem description from the [URI Online Judge](1) and populate a template file with that description.
 
-You have to add `// urionlinejudge::description` to your template.
+You have to add `urionlinejudge::description` to your template.
 
 ##### Options
 

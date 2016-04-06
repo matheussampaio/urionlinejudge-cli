@@ -65,10 +65,12 @@ export default class URIOnlineJudge {
       let countTryies = 120;
       let answer = `- In queue -`;
 
+      yield browser.goto(URIOnlineJudgeURLS.problemSubmissions);
+
       while (answer === `- In queue -` && countTryies-- > 0) {
         answer = yield browser
           .wait(1000)
-          .goto(URIOnlineJudgeURLS.problemSubmissions)
+          .refresh()
           .evaluate(URIOnlineJudge._getAnswer, {
             number: problem
           });
@@ -85,8 +87,9 @@ export default class URIOnlineJudge {
       URIOnlineJudge.showResult({ answer, problem });
 
       // FINISH
-      return yield browser
-        .end();
+      yield browser.end();
+
+      return answer;
     })()
     .catch(error => {
       console.error(error.stack ? error.stack : error);
@@ -174,6 +177,8 @@ export default class URIOnlineJudge {
   }
 
   static _getAnswer(options) {
+    console.log(options);
+
     const table = document.getElementById(`element`).children[0];
     const tbody = table.children[1];
     let answerTmp = `- In queue -`;
@@ -182,6 +187,8 @@ export default class URIOnlineJudge {
       const tr = tbody.children[i];
 
       const tiny = tr.getElementsByClassName(`tiny`)[0].innerText;
+
+      console.log(tiny);
 
       if (options.number === parseInt(tiny, 10)) {
         answerTmp = tr.getElementsByClassName(`answer`)[0].innerText;
