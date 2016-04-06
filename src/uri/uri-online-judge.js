@@ -22,11 +22,13 @@ export default class URIOnlineJudge {
    * @param {string} params.file - Problem file content.
    * @returns {Promise} - Fulfill when question submited. Reject if some error occur.
    */
-  static submit({ email, password, problem, file, code }) {
+  static submit({ email, password, problem, file, language }) {
     const browser = new Nightmare({ show: process.env.DEBUG });
-    const progress = new Progress('Submitting', 3);
+    const progress = new Progress(3);
 
     return co.wrap(function* submitGenerator() {
+      progress.tick(0, 'log in...');
+
       // LOGIN
       // TODO: check if login is success
       const url = yield browser
@@ -40,7 +42,17 @@ export default class URIOnlineJudge {
           .click('input[type=submit]');
       }
 
-      progress.tick();
+      progress.tick(1, 'submiting code...');
+
+      const code = {
+        c: 1,
+        'c++': 2,
+        java: 3,
+        python: 4,
+        python3: 5,
+        ruby: 6,
+        'c#': 7
+      };
 
       // SUBMIT PROBLEM
       yield browser
@@ -48,13 +60,13 @@ export default class URIOnlineJudge {
         .evaluate(options => {
           document.getElementById('language-id').selectedIndex = options.code;
           editor.getSession().setValue(options.file); //eslint-disable-line
-        }, { file, code })
+        }, { file, code: code[language] })
         .click('input[type=submit]');
 
-      progress.tick();
+      progress.tick(1, 'waiting for answer');
 
       // WAIT PROBLEM ANSWER
-      let countTryies = 30;
+      let countTryies = 120;
       let answer = '- In queue -';
 
       while (answer === '- In queue -' && countTryies-- > 0) {
@@ -64,6 +76,8 @@ export default class URIOnlineJudge {
           .evaluate(URIOnlineJudge._getAnswer, {
             number: problem
           });
+
+        progress.tick(0, answer);
       }
 
       if (countTryies <= 0) {
@@ -92,13 +106,14 @@ export default class URIOnlineJudge {
    */
   static fetch({ problemNumber }) {
     const browser = new Nightmare({ show: process.env.DEBUG });
-    const progress = new Progress('Fetching', 3);
+    const progress = new Progress(3);
 
     return co.wrap(function* fetchGenerator() {
+      progress.tick(0, 'loading page...');
       yield browser.goto(URIOnlineJudgeURLS.problemView + problemNumber);
-      progress.tick();
+      progress.tick(1, 'getting description...');
       const description = yield browser.evaluate(URIOnlineJudge._getDescription);
-      progress.tick();
+      progress.tick(1, 'saving file...');
       yield browser.end();
       progress.tick();
 
@@ -146,7 +161,7 @@ export default class URIOnlineJudge {
         color: 'gray'
       },
       {
-        answer: 'Timout',
+        answer: 'timeout',
         color: 'red'
       }
     ];
@@ -157,9 +172,9 @@ export default class URIOnlineJudge {
       }
     });
 
-    const result = chalk[color](`${answer}: ${problem}`);
+    const status = chalk[color](`${answer}:`);
 
-    Log.success(`Result = ${result}`);
+    Log.status(status, problem);
   }
 
   static _getAnswer(options) {

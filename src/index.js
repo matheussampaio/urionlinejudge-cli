@@ -62,15 +62,16 @@ function submit() {
   return Config.load()
     // submit problem to the uri online judge website
     .then(config => {
-      const filename = CLI.filepath ? CLI.filepath : `${CLI.number}.${config.extension}`;
-      const problemFile = fs.readFileSync(filename, 'utf-8');
+      const problemFile = fs.readFileSync(CLI.filepath, 'utf-8');
+      const ext = path.extname(CLI.filepath);
+      const number = CLI.number ? CLI.number : path.basename(CLI.filepath, ext);
 
       return URIOnlineJudge.submit({
         email: config.email,
         password: config.password,
-        problem: CLI.number,
+        problem: parseInt(number, 10),
         file: problemFile,
-        code: 5 // python3
+        language: CLI.language
       });
     })
     // send success analytics
@@ -94,7 +95,7 @@ function submit() {
 function fetch() {
   const force = CLI.force;
   const problemNumber = CLI.number;
-  const injectValue = `// urionlinejudge::description`;
+  const injectValue = 'urionlinejudge::description';
 
   return Config.load()
     .then(config => {
@@ -174,22 +175,20 @@ function injectDescription({
 }) {
   return new Promise(resolve => {
     const desc = [
-      `/*`,
-      ` * Title:`,
+      'Title:',
       `${prepareString(problem.title)}`,
-      ` *`,
+      '',
       `${prepareString(problem.timelimit)}`,
-      ` *`,
-      ` * Description:`,
+      '',
+      'Description:',
       `${prepareString(problem.description)}`,
-      ` *`,
-      ` * Input:`,
+      '',
+      'Input:',
       `${prepareString(problem.input)}`,
-      ` *`,
-      ` * Output:`,
+      '',
+      'Output:',
       `${prepareString(problem.output)}`,
-      ` *`,
-      ` */`
+      ''
     ].join('\n');
 
     const outputFile = templateFile.replace(injectValue, desc);
@@ -202,7 +201,7 @@ function injectDescription({
 
 function prepareString(str) {
   const words = str.split(' ');
-  const start = ` * `;
+  const start = ``;
   let output = ``;
   let newline = start;
 

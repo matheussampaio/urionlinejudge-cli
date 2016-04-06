@@ -12,7 +12,7 @@ const URLS = {
   login: `${base}/judge/en/login`,
   problemView: `${base}/judge/pt/problems/view/`,
   problemSubmit: `${base}/judge/pt/runs/add/`,
-  problemSubmissions: `${base}/judge/pt/runs`,
+  problemSubmissions: `${base}/judge/pt/runs`
 };
 
 export default URLS;

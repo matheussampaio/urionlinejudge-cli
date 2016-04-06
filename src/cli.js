@@ -2,55 +2,45 @@ import yargs from 'yargs';
 
 const argv = yargs
   .usage('$0 <command> <params> [options]')
-  .command('submit', 'submit problem to urionlinejudge', {
-    f: {
-      alias: 'filepath',
-      demand: false,
-      description: 'Filepath of the code',
+  .command('submit <filepath> [number]', 'submit problem to urionlinejudge', {
+    language: {
+      description: 'Language',
+      default: 'python3',
+      choices: ['c', 'c++', 'c#', 'java', 'python', 'python3', 'ruby'],
       requiresArg: true,
       type: 'string'
-    },
+    }
+  })
+  .command('fetch', 'Fetch a problem description', {
     n: {
       alias: 'number',
       demand: true,
       description: 'Number of the problem',
       requiresArg: true,
       type: 'number'
+    },
+    t: {
+      alias: 'template',
+      demand: false,
+      description: 'Filepath of the template',
+      requiresArg: true,
+      type: 'string'
+    },
+    o: {
+      alias: 'output',
+      demand: false,
+      default: '.',
+      description: 'Path to save the file',
+      requiresArg: true,
+      type: 'string'
+    },
+    f: {
+      alias: 'force',
+      demand: false,
+      default: false,
+      description: 'Force overwrite existing files.',
+      type: 'boolean'
     }
-  })
-  .command('fetch', 'Fetch a problem description', (args) => {
-    return args
-      .option('n', {
-        alias: 'number',
-        demand: true,
-        description: 'Number of the problem',
-        requiresArg: true,
-        type: 'number'
-      })
-      .option('t', {
-        alias: 'template',
-        demand: false,
-        description: 'Filepath of the template',
-        requiresArg: true,
-        type: 'string'
-      })
-      .option('o', {
-        alias: 'output',
-        demand: false,
-        default: '.',
-        description: 'Path to save the file',
-        requiresArg: true,
-        type: 'string'
-      })
-      .option('f', {
-        alias: 'force',
-        demand: false,
-        default: false,
-        description: 'Force overwrite existing files.',
-        type: 'boolean'
-      })
-      .help('help')
-      .argv;
   })
   .command('reset', 'reset user informations')
   .demand(1)

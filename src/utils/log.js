@@ -18,6 +18,13 @@ export default class Log {
     }
   }
 
+  static status(status, ...message) {
+    Log._log({
+      status,
+      message
+    });
+  }
+
   static success(...message) {
     Log._log({
       message,
