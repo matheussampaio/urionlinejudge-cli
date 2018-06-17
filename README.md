@@ -1,5 +1,5 @@
 [![npm version](https://badge.fury.io/js/urionlinejudge-cli.svg)](https://badge.fury.io/js/urionlinejudge-cli)
-[![Build Status](https://travis-ci.org/matheussampaio/urionlinejudge-cli.svg?branch=master)](https://travis-ci.org/matheussampaio/urionlinejudge-cli)
+[![CircleCI](https://circleci.com/gh/matheussampaio/urionlinejudge-cli/tree/master.svg?style=svg)](https://circleci.com/gh/matheussampaio/urionlinejudge-cli/tree/master)
 [![Dependency Status](https://david-dm.org/matheussampaio/urionlinejudge-cli.svg)](https://david-dm.org/matheussampaio/urionlinejudge-cli)
 [![devDependency Status](https://david-dm.org/matheussampaio/urionlinejudge-cli/dev-status.svg)](https://david-dm.org/matheussampaio/urionlinejudge-cli#info=devDependencies)
 
