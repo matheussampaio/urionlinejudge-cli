@@ -8,7 +8,6 @@
     "url": "https://github.com/matheussampaio/urionlinejudge-cli"
   },
   "scripts": {
-    "commit": "commit-wizard",
     "lint": "standard",
     "lint:fix": "standard --fix",
     "semantic-release": "semantic-release",
@@ -43,14 +42,7 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
-    "ghooks": "^2.0.4",
     "semantic-release": "^15.5.4",
-    "standard": "^11.0.1",
-    "validate-commit-msg": "^2.5.0"
-  },
-  "config": {
-    "ghooks": {
-      "commit-msg": "validate-commit-msg"
-    }
+    "standard": "^11.0.1"
   }
 }
