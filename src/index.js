@@ -79,7 +79,7 @@ async function submit () {
 }
 
 /**
- * Init a question from the URI Online Judge Website
+ * Init a question from URI Online Judge Website
  */
 async function init () {
   const force = CLI.force
