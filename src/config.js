@@ -1,112 +1,114 @@
-import fs from 'fs';
-import _ from 'lodash';
-import path from 'path';
-import read from 'read';
+const fs = require('fs')
+const _ = require('lodash')
+const path = require('path')
+const read = require('read')
 
-const CONFIG_FILENAME = `.urionlinejudge.json`;
+const CONFIG_FILENAME = `.urionlinejudge.json`
 
-let config;
+let config
 
-function _getConfigPath() {
-  const homePath = process.env.HOME || process.env.USERPROFILE;
-  return path.join(homePath, CONFIG_FILENAME);
+function _getConfigPath () {
+  const homePath = process.env.HOME || process.env.USERPROFILE
+  return path.join(homePath, CONFIG_FILENAME)
 }
 
-function _load(reset) {
-  const exists = fs.existsSync(_getConfigPath());
-  let configJSON = {};
+function _load (reset) {
+  const exists = fs.existsSync(_getConfigPath())
+  let configJSON = {}
 
   if (exists && !reset) {
-    const configPath = _getConfigPath();
-    configJSON = JSON.parse(fs.readFileSync(configPath));
+    const configPath = _getConfigPath()
+    configJSON = JSON.parse(fs.readFileSync(configPath))
   }
 
-  config = configJSON;
+  config = configJSON
 
-  return Promise.resolve();
+  return Promise.resolve()
 }
 
-function _ask(options) {
+function _ask (options) {
   return new Promise((resolve, reject) => {
     read(options, (error, answer) => {
       if (error) {
-        reject(error);
+        reject(error)
       } else if (_.isEmpty(answer)) {
-        reject({ mensage: `Can't use an empty string` });
+        reject(new Error(`Can't use an empty string`))
       } else {
-        resolve(answer);
+        resolve(answer)
       }
-    });
-  });
+    })
+  })
 }
 
-function _askForEmail() {
+function _askForEmail () {
   return _ask({
     prompt: `What is your email?`
   })
-  .then(answer => {
-    config.email = answer;
-  });
+    .then(answer => {
+      config.email = answer
+    })
 }
 
-function _askForPassword() {
+function _askForPassword () {
   return _ask({
     prompt: `What is your password?`,
     silent: true,
     replace: `*`
   })
-  .then(answer => {
-    config.password = answer;
-  });
+    .then(answer => {
+      config.password = answer
+    })
 }
 
-function _askForTemplate() {
+function _askForTemplate () {
   return _ask({
     prompt: `What is the full path for the template?`
   })
-  .then(answer => {
-    config.template = path.resolve(answer);
-  });
+    .then(answer => {
+      config.template = path.resolve(answer)
+    })
 }
 
-function _save() {
+function _save () {
   return new Promise(resolve => {
-    const file = JSON.stringify(config, null, `  `);
+    const file = JSON.stringify(config, null, `  `)
 
     fs.writeFile(_getConfigPath(), file, () => {
-      resolve(config);
-    });
-  });
+      resolve(config)
+    })
+  })
 }
 
-export default class Config {
-  static load(reset) {
-    let save = false;
+class Config {
+  static load (reset) {
+    let save = false
 
     return _load(reset)
       .then(() => {
         if (_.isEmpty(config.template)) {
-          save = true;
-          return _askForTemplate();
+          save = true
+          return _askForTemplate()
         }
       })
       .then(() => {
         if (_.isEmpty(config.email)) {
-          save = true;
-          return _askForEmail();
+          save = true
+          return _askForEmail()
         }
       })
       .then(() => {
         if (_.isEmpty(config.password)) {
-          save = true;
-          return _askForPassword();
+          save = true
+          return _askForPassword()
         }
       })
       .then(() => {
         if (save) {
-          return _save();
+          return _save()
         }
       })
-      .then(() => config);
+      .then(() => config)
   }
 }
+
+module.exports = Config

@@ -4,7 +4,7 @@
  * @type {Object}
  */
 
-const base = `https://www.urionlinejudge.com.br`;
+const base = `https://www.urionlinejudge.com.br`
 
 const URLS = {
   base,
@@ -13,6 +13,6 @@ const URLS = {
   problemView: `${base}/judge/pt/problems/view/`,
   problemSubmit: `${base}/judge/pt/runs/add/`,
   problemSubmissions: `${base}/judge/pt/runs`
-};
+}
 
-export default URLS;
+module.exports = URLS
