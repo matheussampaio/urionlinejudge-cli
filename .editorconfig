@@ -10,10 +10,3 @@ insert_final_newline = true
 
 [*.md]
 trim_trailing_whitespace = false
-
-[*.{json, xml}]
-indent_size = 2
-
-[*.js]
-indent_size = 2
-max_line_length = 120

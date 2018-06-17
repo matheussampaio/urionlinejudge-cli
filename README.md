@@ -27,9 +27,9 @@ You can submit a problem solution to the [URI Online Judge](1).
 
 #### Options
 
-| Option                               | Default             | Description        |
-|--------------------------------------|---------------------|--------------------|
-| `--language [language]`              | `python` | Language used for submitting. Pick one: [`c`, `c++`, `c#`, `java`, `python`, `python3`, `ruby`]. |
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--language [language]` | `python` | Language used for submitting. Options: [`c`, `c++`, `c#`, `java`, `python`, `python3`, `ruby`, `scala`, `js`, `java8`, `go`, `c99`, `kotlin`, `c++17` ]. |
 
 #### Example
 
@@ -43,19 +43,19 @@ $ urionlinejudge submit ./file.cpp 1001 --language c++
 
 
 
-## `fetch`
+## `fetch` [Working in Progress]
 You can fetch a problem description from the [URI Online Judge](1) and populate a template file with that description.
 
 You have to add `urionlinejudge::description` to your template.
 
 ##### Options
 
-| Option                               | Default                     | Description                     |
-|--------------------------------------|-----------------------------|---------------------------------|
-| `-n, --number [number]` **required** |                             | Problem number.                 |
-| `-t, --template [path]`              | Use `config.template` value | Template filepath.              |
-| `-o, --output [path]`                | `.`                         | File output path.               |
-| `-f, --force`                        |                             | Force overwrite existing files. |
+| Option | Default | Description |
+|--------|---------|-------------|
+| `-n, --number [number]` **required** | - | Problem number. |
+| `-t, --template [path]` | Use `config.template` value | Template filepath. |
+| `-o, --output [path]` | Current folder | File output path. |
+| `-f, --force` | - | Force overwrite existing files. |
 
 
 #### Example
@@ -145,6 +145,7 @@ What is your password? *******
 
 # Developing and Contributing
 We'd love to get contributions from you! For a quick guide to getting your system setup for developing take a look at our [Quickstart Guide](https://github.com/matheussampaio/urionlinejudge-cli/blob/master/QUICKSTART.md). Once you are up and running, take a look at the [Contribution Documents](https://github.com/matheussampaio/urionlinejudge-cli/blob/master/CONTRIBUTING.md) to see how to get your changes merged in.
+
 
 # License
 See [LICENSE](https://github.com/matheussampaio/urionlinejudge-cli/blob/master/LICENSE) file.

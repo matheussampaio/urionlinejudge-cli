@@ -1,0 +1,4 @@
+min_reviewers_per_pr: 0
+reviewers:
+  - matheussampaio
+shuffle_team: true

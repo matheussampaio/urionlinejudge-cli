@@ -1,45 +1,47 @@
-import chalk from 'chalk';
+const chalk = require('chalk')
 
-export default class Log {
-  static _log({ status, message = [] }) {
-    const pre = `[*]`;
+class Log {
+  static _log ({ status, message = [] }) {
+    const pre = `[*]`
 
-    console.log(`${pre} ${status}`);
+    console.log(`${pre} ${status}`)
 
     if (message instanceof Array) {
       for (let i = 0; i < message.length; i++) {
-        console.log(`${pre} ${message[i]}`);
+        console.log(`${pre} ${message[i]}`)
       }
     } else {
-      console.log(`${pre} ${message}`);
+      console.log(`${pre} ${message}`)
     }
   }
 
-  static status(status, ...message) {
+  static status (status, ...message) {
     Log._log({
       status,
       message
-    });
+    })
   }
 
-  static success(...message) {
+  static success (...message) {
     Log._log({
       message,
       status: chalk.green(`Success:`)
-    });
+    })
   }
 
-  static error(error) {
+  static error (error) {
     Log._log({
       message: error.stack ? error.stack : error,
       status: chalk.red(`Error:`)
-    });
+    })
   }
 
-  static warning(...message) {
+  static warning (...message) {
     Log._log({
       message,
       status: chalk.yellow(`Warning:`)
-    });
+    })
   }
 }
+
+module.exports = Log

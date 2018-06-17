@@ -1,13 +1,13 @@
-import co from 'co';
-import _ from 'lodash';
-import chalk from 'chalk';
-import Nightmare from 'nightmare';
+const co = require('co')
+const _ = require('lodash')
+const chalk = require('chalk')
+const Nightmare = require('nightmare')
 
-import Log from '../utils/log';
-import Progress from '../utils/progress';
-import URIOnlineJudgeURLS from './uri-online-judge-urls.js';
+const Log = require('../utils/log')
+const Progress = require('../utils/progress')
+const URIOnlineJudgeURLS = require('./uri-online-judge-urls.js')
 
-export default class URIOnlineJudge {
+class URIOnlineJudge {
   /**
    * Submit a problem to the URIOnlineJudge website.
    *
@@ -18,27 +18,27 @@ export default class URIOnlineJudge {
    * @param {string} params.file - Problem file content.
    * @returns {Promise} - Fulfill when question submited. Reject if some error occur.
    */
-  static submit({ email, password, problem, file, language }) {
-    const browser = new Nightmare({ show: process.env.DEBUG });
-    const progress = new Progress(3);
+  static submit ({ email, password, problem, file, language }) {
+    const browser = new Nightmare({ show: process.env.DEBUG })
+    const progress = new Progress(3)
 
-    return co.wrap(function* submitGenerator() {
-      progress.tick(0, `log in...`);
+    return co.wrap(function * submitGenerator () {
+      progress.tick(0, `log in...`)
 
       // LOGIN
       // TODO: check if login is success
       const url = yield browser
         .goto(URIOnlineJudgeURLS.login)
-        .url();
+        .url()
 
       if (url === URIOnlineJudgeURLS.login) {
         yield browser
           .type(`input[id=email]`, email)
           .type(`input[id=password]`, password)
-          .click(`input[type=submit]`);
+          .click(`input[type=submit]`)
       }
 
-      progress.tick(1, `submiting code...`);
+      progress.tick(1, `submiting code...`)
 
       const code = {
         c: 1,
@@ -47,25 +47,32 @@ export default class URIOnlineJudge {
         python: 4,
         python3: 5,
         ruby: 6,
-        'c#': 7
-      };
+        'c#': 7,
+        scala: 8,
+        js: 10,
+        java8: 11,
+        go: 12,
+        c99: 14,
+        kotlin: 15,
+        'c++17': 16
+      }
 
       // SUBMIT PROBLEM
       yield browser
         .goto(URIOnlineJudgeURLS.problemSubmit + problem)
         .evaluate(options => {
-          document.getElementById(`language-id`).selectedIndex = options.code;
+          document.getElementById(`language-id`).selectedIndex = options.code
           editor.getSession().setValue(options.file); //eslint-disable-line
         }, { file, code: code[language] })
-        .click(`input[type=submit]`);
+        .click(`input[type=submit]`)
 
-      progress.tick(1, `waiting for answer`);
+      progress.tick(1, `waiting for answer`)
 
       // WAIT PROBLEM ANSWER
-      let countTryies = 120;
-      let answer = `- In queue -`;
+      let countTryies = 120
+      let answer = `- In queue -`
 
-      yield browser.goto(URIOnlineJudgeURLS.problemSubmissions);
+      yield browser.goto(URIOnlineJudgeURLS.problemSubmissions)
 
       while (answer === `- In queue -` && countTryies-- > 0) {
         answer = yield browser
@@ -73,27 +80,27 @@ export default class URIOnlineJudge {
           .refresh()
           .evaluate(URIOnlineJudge._getAnswer, {
             number: problem
-          });
+          })
 
-        progress.tick(0, answer);
+        progress.tick(0, answer)
       }
 
       if (countTryies <= 0) {
-        answer = `Timeout`;
+        answer = `Timeout`
       }
 
-      progress.tick();
+      progress.tick()
 
-      URIOnlineJudge.showResult({ answer, problem });
+      URIOnlineJudge.showResult({ answer, problem })
 
       // FINISH
-      yield browser.end();
+      yield browser.end()
 
-      return answer;
+      return answer
     })()
-    .catch(error => {
-      console.error(error.stack ? error.stack : error);
-    });
+      .catch(error => {
+        console.error(error.stack ? error.stack : error)
+      })
   }
 
   /**
@@ -103,8 +110,8 @@ export default class URIOnlineJudge {
    * @param {string} params.answer - Problem answer.
    * @param {number} params.problem - Problem number.
    */
-  static showResult({ answer, problem }) {
-    let color = `white`;
+  static showResult ({ answer, problem }) {
+    let color = `white`
 
     const answers = [
       {
@@ -139,40 +146,41 @@ export default class URIOnlineJudge {
         answer: `timeout`,
         color: `red`
       }
-    ];
+    ]
 
     answers.forEach((item) => {
       if (_.includes(answer.toLowerCase(), item.answer.toLowerCase())) {
-        color = item.color;
+        color = item.color
       }
-    });
+    })
 
-    const status = chalk[color](`${answer}:`);
+    const status = chalk[color](`${answer}:`)
 
-    Log.status(status, problem);
+    Log.status(status, problem)
   }
 
-  static _getAnswer(options) {
-    console.log(options);
+  static _getAnswer (options) {
+    console.log(options)
 
-    const table = document.getElementById(`element`).children[0];
-    const tbody = table.children[1];
-    let answerTmp = `- In queue -`;
+    const table = document.getElementById(`element`).children[0]
+    const tbody = table.children[1]
+    let answerTmp = `- In queue -`
 
     for (let i = 0; i < tbody.children.length; i++) {
-      const tr = tbody.children[i];
+      const tr = tbody.children[i]
 
-      const tiny = tr.getElementsByClassName(`tiny`)[0].innerText;
+      const tiny = tr.getElementsByClassName(`tiny`)[0].innerText
 
-      console.log(tiny);
+      console.log(tiny)
 
       if (options.number === parseInt(tiny, 10)) {
-        answerTmp = tr.getElementsByClassName(`answer`)[0].innerText;
-        break;
+        answerTmp = tr.getElementsByClassName(`answer`)[0].innerText
+        break
       }
     }
 
-    return answerTmp;
+    return answerTmp
   }
-
 }
+
+module.exports = URIOnlineJudge
