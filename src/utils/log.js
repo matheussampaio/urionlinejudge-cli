@@ -1,7 +1,7 @@
 const chalk = require('chalk')
 
 class Log {
-  static _log ({ status, message = [] }) {
+  log ({ status, message = [] } = {}) {
     const pre = `[*]`
 
     console.log(`${pre} ${status}`)
@@ -15,33 +15,33 @@ class Log {
     }
   }
 
-  static status (status, ...message) {
-    Log._log({
+  status (status, ...message) {
+    return this.log({
       status,
       message
     })
   }
 
-  static success (...message) {
-    Log._log({
+  success (...message) {
+    return this.log({
       message,
       status: chalk.green(`Success:`)
     })
   }
 
-  static error (error) {
-    Log._log({
+  error (error) {
+    return this.log({
       message: error.stack ? error.stack : error,
       status: chalk.red(`Error:`)
     })
   }
 
-  static warning (...message) {
-    Log._log({
+  warning (...message) {
+    return this.log({
       message,
       status: chalk.yellow(`Warning:`)
     })
   }
 }
 
-module.exports = Log
+module.exports = new Log()
