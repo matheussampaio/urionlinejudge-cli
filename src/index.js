@@ -9,7 +9,7 @@ const Config = require('./config')
 const Log = require('./utils/log')
 const pkg = require('../package.json')
 const URIOnlineJudge = require('./uri/uri-online-judge')
-const URIOnlineJudgeURL = require('./uri/uri-online-judge-urls')
+const { URLS } = require('./utils/constants')
 
 main()
 
@@ -24,7 +24,7 @@ async function runCommand () {
   const commands = {
     reset,
     submit,
-    init
+    fetch
   }
 
   const command = commands[CLI.command]
@@ -72,16 +72,16 @@ async function submit () {
   await URIOnlineJudge.submit({
     email: config.email,
     password: config.password,
-    problem: parseInt(number, 10),
+    problemNumber: parseInt(number, 10),
     file: problemFile,
     language: CLI.language
   })
 }
 
 /**
- * Init a question from URI Online Judge Website
+ * Fetch a question from URI Online Judge Website
  */
-async function init () {
+async function fetch () {
   const force = CLI.force
   const problemNumber = CLI.number
   const injectValue = `urionlinejudge::description`
@@ -104,7 +104,7 @@ async function init () {
 
   await checkTemplate(options)
 
-  const desc = URIOnlineJudgeURL.problemView + problemNumber
+  const desc = URLS.PROBLEM_VIEW + problemNumber
   const outputFile = templateFile.replace(injectValue, desc)
 
   fs.writeFileSync(outputFilepath, outputFile)

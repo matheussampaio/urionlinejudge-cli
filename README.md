@@ -42,8 +42,7 @@ $ urionlinejudge submit ./file.cpp 1001 --language c++
 ```
 
 
-
-## `fetch` [Working in Progress]
+## `fetch <number>` [Working in Progress]
 You can fetch a problem description from the [URI Online Judge](1) and populate a template file with that description.
 
 You have to add `urionlinejudge::description` to your template.
@@ -52,10 +51,9 @@ You have to add `urionlinejudge::description` to your template.
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| `-n, --number [number]` **required** | - | Problem number. |
 | `-t, --template [path]` | Use `config.template` value | Template filepath. |
 | `-o, --output [path]` | Current folder | File output path. |
-| `-f, --force` | - | Force overwrite existing files. |
+| `-f, --force` | - | Overwrite existing files. |
 
 
 #### Example

@@ -1,11 +1,11 @@
-const co = require('co')
 const _ = require('lodash')
 const chalk = require('chalk')
-const Nightmare = require('nightmare')
+const puppeteer = require('puppeteer')
 
 const Log = require('../utils/log')
 const Progress = require('../utils/progress')
-const URIOnlineJudgeURLS = require('./uri-online-judge-urls.js')
+const { ANSWERS, LANGUAGES, URLS } = require('../utils/constants')
+const { wait } = require('../utils')
 
 class URIOnlineJudge {
   /**
@@ -14,93 +14,36 @@ class URIOnlineJudge {
    * @param {Object} params - params object.
    * @param {string} params.email - User email.
    * @param {string} params.password - User password.
-   * @param {number} params.problem - Problem number.
+   * @param {number} params.problemNumber - Problem number.
    * @param {string} params.file - Problem file content.
    * @returns {Promise} - Fulfill when question submited. Reject if some error occur.
    */
-  static submit ({ email, password, problem, file, language }) {
-    const browser = new Nightmare({ show: process.env.DEBUG })
+  static async submit ({ email, password, problemNumber, file, language }) {
+    const browser = await puppeteer.launch({
+      slowMo: 200,
+      headless: false
+    })
+    const page = await browser.newPage()
     const progress = new Progress(3)
 
-    return co.wrap(function * submitGenerator () {
-      progress.tick(0, `log in...`)
+    progress.tick(0, 'log in...')
+    await URIOnlineJudge.login({ page, email, password })
 
-      // LOGIN
-      // TODO: check if login is success
-      const url = yield browser
-        .goto(URIOnlineJudgeURLS.login)
-        .url()
+    // SUBMIT PROBLEM
+    progress.tick(1, 'submiting problem...')
+    await URIOnlineJudge.submitProblem({ page, problemNumber, language, file })
 
-      if (url === URIOnlineJudgeURLS.login) {
-        yield browser
-          .type(`input[id=email]`, email)
-          .type(`input[id=password]`, password)
-          .click(`input[type=submit]`)
-      }
+    progress.tick(1, 'waiting for answer')
+    const answer = await URIOnlineJudge.waitAnswer({ page, problemNumber, progress })
 
-      progress.tick(1, `submiting code...`)
+    progress.tick()
 
-      const code = {
-        c: 1,
-        'c++': 2,
-        java: 3,
-        python: 4,
-        python3: 5,
-        ruby: 6,
-        'c#': 7,
-        scala: 8,
-        js: 10,
-        java8: 11,
-        go: 12,
-        c99: 14,
-        kotlin: 15,
-        'c++17': 16
-      }
+    URIOnlineJudge.showResult({ answer, problemNumber })
 
-      // SUBMIT PROBLEM
-      yield browser
-        .goto(URIOnlineJudgeURLS.problemSubmit + problem)
-        .evaluate(options => {
-          document.getElementById(`language-id`).selectedIndex = options.code
-          editor.getSession().setValue(options.file); //eslint-disable-line
-        }, { file, code: code[language] })
-        .click(`input[type=submit]`)
+    // FINISH
+    await browser.close()
 
-      progress.tick(1, `waiting for answer`)
-
-      // WAIT PROBLEM ANSWER
-      let countTryies = 120
-      let answer = `- In queue -`
-
-      yield browser.goto(URIOnlineJudgeURLS.problemSubmissions)
-
-      while (answer === `- In queue -` && countTryies-- > 0) {
-        answer = yield browser
-          .wait(1000)
-          .refresh()
-          .evaluate(URIOnlineJudge._getAnswer, {
-            number: problem
-          })
-
-        progress.tick(0, answer)
-      }
-
-      if (countTryies <= 0) {
-        answer = `Timeout`
-      }
-
-      progress.tick()
-
-      URIOnlineJudge.showResult({ answer, problem })
-
-      // FINISH
-      yield browser.end()
-
-      return answer
-    })()
-      .catch(error => {
-        console.error(error.stack ? error.stack : error)
-      })
+    return answer
   }
 
   /**
@@ -110,45 +53,10 @@ class URIOnlineJudge {
    * @param {string} params.answer - Problem answer.
    * @param {number} params.problem - Problem number.
    */
-  static showResult ({ answer, problem }) {
-    let color = `white`
+  static showResult ({ answer, problemNumber }) {
+    let color = 'white'
 
-    const answers = [
-      {
-        answer: `accepted`,
-        color: `green`
-      },
-      {
-        answer: `wrong`,
-        color: `red`
-      },
-      {
-        answer: `find the answer`,
-        color: `red`
-      },
-      {
-        answer: `compilation error`,
-        color: `yellow`
-      },
-      {
-        answer: `time limit exceeded`,
-        color: `blue`
-      },
-      {
-        answer: `runtime error`,
-        color: `cyan`
-      },
-      {
-        answer: `presentation error`,
-        color: `gray`
-      },
-      {
-        answer: `timeout`,
-        color: `red`
-      }
-    ]
-
-    answers.forEach((item) => {
+    ANSWERS.forEach((item) => {
       if (_.includes(answer.toLowerCase(), item.answer.toLowerCase())) {
         color = item.color
       }
@@ -156,30 +64,71 @@ class URIOnlineJudge {
 
     const status = chalk[color](`${answer}:`)
 
-    Log.status(status, problem)
+    Log.status(status, problemNumber)
   }
 
-  static _getAnswer (options) {
-    console.log(options)
+  static async login ({ page, email, password }) {
+    await page.goto(URLS.LOGIN)
 
-    const table = document.getElementById(`element`).children[0]
-    const tbody = table.children[1]
-    let answerTmp = `- In queue -`
+    if (page.url() === URLS.LOGIN) {
+      await page.type('input[id=email]', email)
+      await page.type('input[id=password]', password)
+      await page.click('input[type=submit]')
+    }
+  }
 
-    for (let i = 0; i < tbody.children.length; i++) {
-      const tr = tbody.children[i]
+  static async submitProblem ({ page, problemNumber, language, file }) {
+    await page.goto(URLS.PROBLEM_SUBMIT + problemNumber)
 
-      const tiny = tr.getElementsByClassName(`tiny`)[0].innerText
+    await page.evaluate(options => {
+      document.getElementById('language-id').value = options.code
 
-      console.log(tiny)
+      editor.getSession().setValue(options.file) //eslint-disable-line
+    }, { file, code: LANGUAGES[language] })
 
-      if (options.number === parseInt(tiny, 10)) {
-        answerTmp = tr.getElementsByClassName(`answer`)[0].innerText
-        break
-      }
+    await page.click('input[type=submit]')
+  }
+
+  static async waitAnswer ({ page, problemNumber, progress }) {
+    // WAIT PROBLEM ANSWER
+    let countTries = 120
+    let answer = '- In queue -'
+
+    await page.goto(URLS.PROBLEM_SUBMISSIONS)
+
+    while (answer === '- In queue -' && countTries-- > 0) {
+      await wait(1000)
+      await page.reload()
+
+      answer = await page.evaluate(options => {
+        const table = document.getElementById('element').children[0]
+        const tbody = table.children[1]
+        let answerTmp = '- In queue -'
+
+        for (let i = 0; i < tbody.children.length; i++) {
+          const tr = tbody.children[i]
+
+          const tiny = tr.getElementsByClassName('tiny')[0].innerText
+
+          if (options.problemNumber === parseInt(tiny, 10)) {
+            answerTmp = tr.getElementsByClassName('answer')[0].innerText
+            break
+          }
+        }
+
+        return answerTmp
+      }, {
+        problemNumber
+      })
+
+      progress.tick(0, answer)
     }
 
-    return answerTmp
+    if (countTries <= 0) {
+      answer = 'Timeout'
+    }
+
+    return answer
   }
 }
 
