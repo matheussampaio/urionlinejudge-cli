@@ -1,6 +1,6 @@
 {
   "name": "urionlinejudge-cli",
-  "version": "0.0.0-development",
+  "version": "5.2.0",
   "description": "The URIOnlineJudge command line utility.",
   "main": "src/index.js",
   "repository": {
