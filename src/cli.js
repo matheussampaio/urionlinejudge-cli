@@ -15,7 +15,7 @@ const argv = yargs
       type: 'string'
     }
   })
-  .command('init <number> [force]', 'Fetch a problem description', {
+  .command('fetch <number>', 'Fetch a problem description', {
     t: {
       alias: 'template',
       demand: false,
@@ -30,6 +30,13 @@ const argv = yargs
       description: 'Path to save the file',
       requiresArg: true,
       type: 'string'
+    },
+    f: {
+      alias: 'force',
+      demand: false,
+      default: false,
+      description: 'Overrides existing files',
+      type: 'bollean'
     }
   })
   .command('reset', 'reset user informations')
