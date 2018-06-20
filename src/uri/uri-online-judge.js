@@ -19,7 +19,10 @@ class URIOnlineJudge {
    * @returns {Promise} - Fulfill when question submited. Reject if some error occur.
    */
   static async submit ({ email, password, problemNumber, file, language }) {
-    const browser = await puppeteer.launch()
+    const browser = await puppeteer.launch({
+      slowMo: 200,
+      headless: process.env.DEBUG
+    })
     const page = await browser.newPage()
     const progress = new Progress(3)
 
@@ -59,7 +62,7 @@ class URIOnlineJudge {
       }
     })
 
-    const status = chalk[color](`${answer}:`)
+    const status = chalk[color](answer)
 
     Log.status(status, problemNumber)
   }
