@@ -1,3 +1,10 @@
+# [5.4.0](https://github.com/matheussampaio/urionlinejudge-cli/compare/v5.3.0...v5.4.0) (2018-06-20)
+
+
+### Features
+
+* add better path prompt when setting the template path ([7ebaa84](https://github.com/matheussampaio/urionlinejudge-cli/commit/7ebaa84))
+
 # [5.3.0](https://github.com/matheussampaio/urionlinejudge-cli/compare/v5.2.1...v5.3.0) (2018-06-20)
 
 
