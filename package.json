@@ -11,7 +11,8 @@
     "lint": "standard",
     "lint:fix": "standard --fix",
     "semantic-release": "semantic-release",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "test": "npm run lint"
   },
   "author": "Matheus Sampaio <matheus@sampaio.us> (http://matheus.sampaio.us)",
   "bugs": {

@@ -9,11 +9,11 @@ inquirer.registerPrompt('path', PathPrompt)
 
 const CONFIG_FILENAME = `.urionlinejudge.json`
 
-function getConfigurationPath() {
+function getConfigurationPath () {
   return path.join(process.env.HOME || process.env.USERPROFILE, CONFIG_FILENAME)
 }
 
-async function loadConfiguration() {
+async function loadConfiguration () {
   if (fs.existsSync(getConfigurationPath())) {
     return JSON.parse(fs.readFileSync(getConfigurationPath()))
   }
@@ -21,7 +21,7 @@ async function loadConfiguration() {
   return {}
 }
 
-async function load({ force = false } = {}) {
+async function load ({ force = false } = {}) {
   const config = await loadConfiguration()
 
   const questions = [

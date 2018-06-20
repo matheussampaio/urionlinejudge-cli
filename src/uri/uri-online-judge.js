@@ -4,7 +4,7 @@ const puppeteer = require('puppeteer')
 
 const Log = require('../utils/log')
 const Progress = require('../utils/progress')
-const { ANSWERS, LANGUAGES, URLS } = require('../utils/constants')
+const { ANSWERS, URLS } = require('../utils/constants')
 const { wait } = require('../utils')
 
 class URIOnlineJudge {
