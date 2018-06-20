@@ -1,3 +1,10 @@
+## [5.4.1](https://github.com/matheussampaio/urionlinejudge-cli/compare/v5.4.0...v5.4.1) (2018-06-20)
+
+
+### Bug Fixes
+
+* waiting the page to load with slowMo ([cc074ef](https://github.com/matheussampaio/urionlinejudge-cli/commit/cc074ef))
+
 # [5.4.0](https://github.com/matheussampaio/urionlinejudge-cli/compare/v5.3.0...v5.4.0) (2018-06-20)
 
 
