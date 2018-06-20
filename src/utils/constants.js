@@ -16,20 +16,20 @@ const URLS = {
 }
 
 const LANGUAGES = {
-  c: 1,
-  'c++': 2,
-  java: 3,
-  python: 4,
-  python3: 5,
-  ruby: 6,
-  'c#': 7,
-  scala: 8,
-  js: 10,
-  java8: 11,
-  go: 12,
-  c99: 14,
-  kotlin: 15,
-  'c++17': 16
+  1 : 'C',
+  2 : 'C++',
+  3 : 'Java 7',
+  4 : 'Python',
+  5 : 'Python3',
+  6 : 'Ruby',
+  7 : 'C#',
+  8 : 'Scala',
+  10: 'Javascript' ,
+  11: 'Java 8' ,
+  12: 'Go' ,
+  14: 'C99' ,
+  15: 'Kotlin' ,
+  16: 'C++17' ,
 }
 
 const ANSWERS = [

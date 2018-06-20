@@ -25,21 +25,21 @@ class Log {
   success (...message) {
     return this.log({
       message,
-      status: chalk.green(`Success:`)
+      status: chalk.green(`Success`)
     })
   }
 
   error (error) {
     return this.log({
       message: error.stack ? error.stack : error,
-      status: chalk.red(`Error:`)
+      status: chalk.red(`Error`)
     })
   }
 
   warning (...message) {
     return this.log({
       message,
-      status: chalk.yellow(`Warning:`)
+      status: chalk.yellow(`Warning`)
     })
   }
 }

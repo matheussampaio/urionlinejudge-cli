@@ -1,5 +1,6 @@
 #! /usr/bin/env node
 
+const _ = require('lodash')
 const fs = require('fs')
 const path = require('path')
 const updateNotifier = require('update-notifier')
@@ -9,7 +10,7 @@ const Config = require('./config')
 const Log = require('./utils/log')
 const pkg = require('../package.json')
 const URIOnlineJudge = require('./uri/uri-online-judge')
-const { URLS } = require('./utils/constants')
+const { LANGUAGES, URLS } = require('./utils/constants')
 
 main()
 
@@ -51,8 +52,9 @@ async function runCommand () {
  */
 async function reset () {
   try {
-    const config = await Config.load(true)
-    Log.success(`Email: ${config.email}`, `Template: ${config.template}`)
+    const config = await Config.load({ force: true })
+
+    Log.success(`Email: ${config.email}`, `Language: ${LANGUAGES[config.language]}`, `Template: ${config.template}`)
   } catch (error) {
     Log.error(error)
   }
@@ -74,7 +76,7 @@ async function submit () {
     password: config.password,
     problemNumber: parseInt(number, 10),
     file: problemFile,
-    language: CLI.language
+    language: CLI.language ? _.findKey(LANGUAGES, value => value === CLI.language) : config.language
   })
 }
 

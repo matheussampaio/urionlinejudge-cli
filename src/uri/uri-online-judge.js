@@ -19,10 +19,7 @@ class URIOnlineJudge {
    * @returns {Promise} - Fulfill when question submited. Reject if some error occur.
    */
   static async submit ({ email, password, problemNumber, file, language }) {
-    const browser = await puppeteer.launch({
-      slowMo: 200,
-      headless: false
-    })
+    const browser = await puppeteer.launch()
     const page = await browser.newPage()
     const progress = new Progress(3)
 
@@ -81,10 +78,10 @@ class URIOnlineJudge {
     await page.goto(URLS.PROBLEM_SUBMIT + problemNumber)
 
     await page.evaluate(options => {
-      document.getElementById('language-id').value = options.code
+      document.getElementById('language-id').value = options.language
 
       editor.getSession().setValue(options.file) //eslint-disable-line
-    }, { file, code: LANGUAGES[language] })
+    }, { file, language })
 
     await page.click('input[type=submit]')
   }

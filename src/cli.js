@@ -1,5 +1,6 @@
 const yargs = require('yargs')
 
+const { LANGUAGES } = require('./utils/constants')
 const { version } = require('../package.json')
 
 const argv = yargs
@@ -8,9 +9,7 @@ const argv = yargs
     l: {
       alias: 'language',
       description: 'Language',
-      default: 'python3',
-      choices: ['c', 'c++', 'c#', 'java', 'python', 'python3', 'ruby',
-        'scala', 'js', 'java8', 'go', 'c99', 'kotlin', 'c++17' ],
+      choices: Object.values(LANGUAGES),
       requiresArg: true,
       type: 'string'
     }

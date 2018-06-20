@@ -1,114 +1,59 @@
 const fs = require('fs')
-const _ = require('lodash')
+const inquirer = require('inquirer')
 const path = require('path')
-const read = require('read')
+
+const { LANGUAGES } = require('./utils/constants')
 
 const CONFIG_FILENAME = `.urionlinejudge.json`
 
-let config
-
-function _getConfigPath () {
-  const homePath = process.env.HOME || process.env.USERPROFILE
-  return path.join(homePath, CONFIG_FILENAME)
+function getConfigurationPath() {
+  return path.join(process.env.HOME || process.env.USERPROFILE, CONFIG_FILENAME)
 }
 
-function _load (reset) {
-  const exists = fs.existsSync(_getConfigPath())
-  let configJSON = {}
-
-  if (exists && !reset) {
-    const configPath = _getConfigPath()
-    configJSON = JSON.parse(fs.readFileSync(configPath))
+async function loadConfiguration() {
+  if (fs.existsSync(getConfigurationPath())) {
+    return JSON.parse(fs.readFileSync(getConfigurationPath()))
   }
 
-  config = configJSON
-
-  return Promise.resolve()
+  return {}
 }
 
-function _ask (options) {
-  return new Promise((resolve, reject) => {
-    read(options, (error, answer) => {
-      if (error) {
-        reject(error)
-      } else if (_.isEmpty(answer)) {
-        reject(new Error(`Can't use an empty string`))
-      } else {
-        resolve(answer)
-      }
-    })
-  })
+async function load({ force = false } = {}) {
+  const config = await loadConfiguration()
+
+  const questions = [
+    {
+      name: 'email',
+      message: 'What is your URI Online Judge email?',
+      when: config.email == null || force
+    },
+    {
+      name: 'password',
+      type: 'password',
+      message: 'What is your URI Online Judge password?',
+      when: config.password == null || force
+    },
+    {
+      name: 'language',
+      type: 'list',
+      choices: Object.entries(LANGUAGES).map(([value, name]) => ({ name, value })),
+      message: 'What is the default language?',
+      when: config.language == null || force
+    },
+    {
+      name: 'template',
+      message: 'What is the full path for the default template file?',
+      when: config.template == null || force
+    }
+  ]
+
+  const answers = await inquirer.prompt(questions)
+
+  const configurationWithAnswers = Object.assign(config, answers)
+
+  fs.writeFileSync(getConfigurationPath(), JSON.stringify(configurationWithAnswers, null, 2))
+
+  return configurationWithAnswers
 }
 
-function _askForEmail () {
-  return _ask({
-    prompt: `What is your email?`
-  })
-    .then(answer => {
-      config.email = answer
-    })
-}
-
-function _askForPassword () {
-  return _ask({
-    prompt: `What is your password?`,
-    silent: true,
-    replace: `*`
-  })
-    .then(answer => {
-      config.password = answer
-    })
-}
-
-function _askForTemplate () {
-  return _ask({
-    prompt: `What is the full path for the template?`
-  })
-    .then(answer => {
-      config.template = path.resolve(answer)
-    })
-}
-
-function _save () {
-  return new Promise(resolve => {
-    const file = JSON.stringify(config, null, `  `)
-
-    fs.writeFile(_getConfigPath(), file, () => {
-      resolve(config)
-    })
-  })
-}
-
-class Config {
-  static load (reset) {
-    let save = false
-
-    return _load(reset)
-      .then(() => {
-        if (_.isEmpty(config.template)) {
-          save = true
-          return _askForTemplate()
-        }
-      })
-      .then(() => {
-        if (_.isEmpty(config.email)) {
-          save = true
-          return _askForEmail()
-        }
-      })
-      .then(() => {
-        if (_.isEmpty(config.password)) {
-          save = true
-          return _askForPassword()
-        }
-      })
-      .then(() => {
-        if (save) {
-          return _save()
-        }
-      })
-      .then(() => config)
-  }
-}
-
-module.exports = Config
+module.exports = { load }
