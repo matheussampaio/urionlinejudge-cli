@@ -1,8 +1,11 @@
 const fs = require('fs')
 const inquirer = require('inquirer')
 const path = require('path')
+const { PathPrompt } = require('inquirer-path')
 
 const { LANGUAGES } = require('./utils/constants')
+
+inquirer.registerPrompt('path', PathPrompt)
 
 const CONFIG_FILENAME = `.urionlinejudge.json`
 
@@ -42,8 +45,10 @@ async function load({ force = false } = {}) {
     },
     {
       name: 'template',
+      type: 'path',
       message: 'What is the full path for the default template file?',
-      when: config.template == null || force
+      when: config.template == null || force,
+      cwd: process.cwd()
     }
   ]
 
